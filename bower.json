@@ -1,0 +1,15 @@
+{
+  "name": "eventmap",
+  "version": "1.0.0",
+  "main": "dist/eventmap.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "udefine",
+    "src",
+    "gruntfile.coffee"
+  ]
+}
