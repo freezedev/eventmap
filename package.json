@@ -1,0 +1,17 @@
+{
+  "name": "eventmap",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/freezedev/eventmap.git"
+  },
+  "devDependencies": {
+    "grunt": "0.4.x",
+    "grunt-contrib-coffee": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-coffeelint": "*"
+  },
+  "readmeFilename": "README.md",
+  "author": "Johannes Stein",
+  "license": "Public domain"
+}
