@@ -82,8 +82,7 @@
     'use strict';
     var EventMap;
     EventMap = (function() {
-      function EventMap(sender) {
-        this.sender = sender;
+      function EventMap() {
         this.events = {};
         this.validEvents = [];
       }
@@ -135,8 +134,7 @@
         eventDesc = {
           event: eventFunction,
           id: -1,
-          type: '',
-          sender: this.sender
+          type: ''
         };
         if (!this.events[eventName]) {
           this.events[eventName] = [eventDesc];
@@ -173,13 +171,13 @@
       };
 
       EventMap.prototype.trigger = function() {
-        var args, context, delay, eventName, i, interval, name, repeat, timeoutId, triggerEvent, triggerFunction, useSender, _i, _len, _ref;
+        var args, context, delay, eventName, i, interval, name, repeat, sender, timeoutId, triggerEvent, triggerFunction, _i, _len, _ref;
         eventName = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
         if (eventName == null) {
           return;
         }
         if (typeof eventName === 'object') {
-          name = eventName.name, interval = eventName.interval, repeat = eventName.repeat, context = eventName.context, delay = eventName.delay, useSender = eventName.useSender;
+          name = eventName.name, interval = eventName.interval, repeat = eventName.repeat, context = eventName.context, delay = eventName.delay, sender = eventName.sender;
         } else {
           name = eventName;
         }
@@ -199,8 +197,8 @@
           delay = 0;
         }
         triggerFunction = function(item) {
-          if (useSender) {
-            return item.event.apply(context, [].concat.apply([], [[item.sender], args]));
+          if (sender) {
+            return item.event.apply(context, [].concat.apply([], [[sender], args]));
           } else {
             return item.event.apply(context, args);
           }
