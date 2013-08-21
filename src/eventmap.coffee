@@ -3,7 +3,7 @@ udefine 'eventmap', ['root'], (root) ->
   
   class EventMap
    
-    constructor: (@sender) ->
+    constructor: ->
       @events = {}
       @validEvents = []
 
@@ -39,7 +39,6 @@ udefine 'eventmap', ['root'], (root) ->
         event: eventFunction
         id: -1
         type: ''
-        sender: @sender
       
       unless @events[eventName]
         @events[eventName] = [eventDesc]
@@ -73,7 +72,7 @@ udefine 'eventmap', ['root'], (root) ->
 
       # Differentiate between eventName being an object or a string
       if typeof eventName is 'object'
-        {name, interval, repeat, context, delay, useSender} = eventName
+        {name, interval, repeat, context, delay, sender} = eventName
       else
         name = eventName
 
@@ -88,8 +87,8 @@ udefine 'eventmap', ['root'], (root) ->
       
       
       triggerFunction = (item) ->
-        if useSender
-          item.event.apply context, [].concat.apply [], [[item.sender], args]
+        if sender
+          item.event.apply context, [].concat.apply [], [[sender], args]
         else
           item.event.apply context, args
       
