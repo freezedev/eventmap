@@ -1,6 +1,6 @@
 {
   "name": "eventmap",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "dist/eventmap.js",
   "ignore": [
     "**/.*",
@@ -11,5 +11,8 @@
     "udefine",
     "src",
     "gruntfile.coffee"
-  ]
+  ],
+  "dependencies": {
+    "udefine": "~0.7.1"
+  }
 }
