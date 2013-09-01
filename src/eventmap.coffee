@@ -1,5 +1,6 @@
+'use strict'
+
 udefine 'eventmap', ['root'], (root) ->
-  'use strict'
   
   class EventMap
    
@@ -115,6 +116,3 @@ udefine 'eventmap', ['root'], (root) ->
           triggerEvent.call @, i
 
       @
-
-      
-  if udefine.env.browser then root.EventMap = EventMap else EventMap
