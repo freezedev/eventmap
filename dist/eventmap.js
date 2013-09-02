@@ -1,17 +1,21 @@
 (function() {
   (function(root) {
-    return root.udefine.globals['eventmap'] = root.EventMap;
+    root.udefine.globals['eventmap'] = root.EventMap;
+    return root.udefine.inject['eventmap'] = {
+      root: root,
+      name: 'EventMap'
+    };
   })(this);
 
 }).call(this);
 
 (function() {
+  'use strict';
   var __slice = [].slice;
 
   udefine('eventmap', ['root'], function(root) {
-    'use strict';
     var EventMap;
-    EventMap = (function() {
+    return EventMap = (function() {
       function EventMap() {
         this.events = {};
         this.validEvents = [];
@@ -166,11 +170,6 @@
       return EventMap;
 
     })();
-    if (udefine.env.browser) {
-      return root.EventMap = EventMap;
-    } else {
-      return EventMap;
-    }
   });
 
 }).call(this);
