@@ -1,11 +1,11 @@
 (function() {
-  (function(root) {
-    root.udefine.globals['eventmap'] = root.EventMap;
-    return root.udefine.inject['eventmap'] = {
-      root: root,
-      name: 'EventMap'
+  (function(root, name) {
+    root.udefine.globals[name.toLowerCase()] = root[name];
+    return root.udefine.inject[name.toLowerCase()] = {
+      name: name,
+      root: root
     };
-  })(this);
+  })(this, 'EventMap');
 
 }).call(this);
 
