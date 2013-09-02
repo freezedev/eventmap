@@ -1,6 +1,4 @@
-do (root = @) ->
-  root.udefine.globals['eventmap'] = root.EventMap
-  
-  root.udefine.inject['eventmap'] =
-    root: root
-    name: 'EventMap'
+do (root = @, name = 'EventMap') ->
+  root.udefine.globals[name.toLowerCase()] = root[name]
+
+  root.udefine.inject[name.toLowerCase()] = {name, root}
