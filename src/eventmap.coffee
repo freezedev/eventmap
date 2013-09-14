@@ -1,12 +1,31 @@
 'use strict'
 
+hasProp = {}.hasOwnProperty
+
+defaults = (opts, defOpts) ->
+  opts = {} unless opts?
+    
+  for key, value of defOpts
+    unless hasProp.call opts, key
+      opts[key] = value
+      
+  opts
+
+flatten = (arr) -> [].concat.call [], arr
+
 udefine 'eventmap', ['root'], (root) ->
   
   class EventMap
    
-    constructor: ->
+    constructor: (options) ->
+      options = defaults options,
+        shorthandFunctions: true
+        shorthandFunctionContext: @
+      
       @events = {}
       @validEvents = []
+      
+      @options = options
 
     serialize: ->
       try
@@ -45,6 +64,11 @@ udefine 'eventmap', ['root'], (root) ->
         @events[eventName] = [eventDesc]
       else
         @events[eventName].push eventDesc
+      
+      if @options.shorthandFunctions
+        unless hasProp.call @options.shorthandFunctionContext, eventName
+          @options.shorthandFunctionContext[eventName] = (args...) =>
+            @trigger.apply @, flatten(eventName, args)
       
       @
       
@@ -89,7 +113,7 @@ udefine 'eventmap', ['root'], (root) ->
       
       triggerFunction = (item) ->
         if sender
-          item.event.apply context, [].concat.apply [], [[sender], args]
+          item.event.apply context, flatten [[sender], args]
         else
           item.event.apply context, args
       
