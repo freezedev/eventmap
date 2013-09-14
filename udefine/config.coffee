@@ -1,4 +1,5 @@
-do (root = @, name = 'EventMap') ->
-  root.udefine.globals[name.toLowerCase()] = root[name]
-
-  root.udefine.inject[name.toLowerCase()] = {name, root}
+do (name = 'EventMap') ->
+  udefine.configure (root) ->
+    @globals[name.toLowerCase()] = root[name]
+  
+    @inject[name.toLowerCase()] = {name, root}
