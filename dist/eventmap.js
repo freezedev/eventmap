@@ -1,24 +1,52 @@
 (function() {
-  (function(root, name) {
-    root.udefine.globals[name.toLowerCase()] = root[name];
-    return root.udefine.inject[name.toLowerCase()] = {
-      name: name,
-      root: root
-    };
-  })(this, 'EventMap');
+  (function(name) {
+    return udefine.configure(function(root) {
+      this.globals[name.toLowerCase()] = root[name];
+      return this.inject[name.toLowerCase()] = {
+        name: name,
+        root: root
+      };
+    });
+  })('EventMap');
 
 }).call(this);
 
 (function() {
   'use strict';
-  var __slice = [].slice;
+  var defaults, flatten, hasProp,
+    __slice = [].slice;
+
+  hasProp = {}.hasOwnProperty;
+
+  defaults = function(opts, defOpts) {
+    var key, value;
+    if (opts == null) {
+      opts = {};
+    }
+    for (key in defOpts) {
+      value = defOpts[key];
+      if (!hasProp.call(opts, key)) {
+        opts[key] = value;
+      }
+    }
+    return opts;
+  };
+
+  flatten = function(arr) {
+    return [].concat.call([], arr);
+  };
 
   udefine('eventmap', ['root'], function(root) {
     var EventMap;
     return EventMap = (function() {
-      function EventMap() {
+      function EventMap(options) {
+        options = defaults(options, {
+          shorthandFunctions: true,
+          shorthandFunctionContext: this
+        });
         this.events = {};
         this.validEvents = [];
+        this.options = options;
       }
 
       EventMap.prototype.serialize = function() {
@@ -56,7 +84,8 @@
       };
 
       EventMap.prototype.on = function(eventName, eventFunction) {
-        var eventDesc;
+        var eventDesc,
+          _this = this;
         if (!eventFunction) {
           return;
         }
@@ -74,6 +103,15 @@
           this.events[eventName] = [eventDesc];
         } else {
           this.events[eventName].push(eventDesc);
+        }
+        if (this.options.shorthandFunctions) {
+          if (!hasProp.call(this.options.shorthandFunctionContext, eventName)) {
+            this.options.shorthandFunctionContext[eventName] = function() {
+              var args;
+              args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+              return _this.trigger.apply(_this, flatten(eventName, args));
+            };
+          }
         }
         return this;
       };
@@ -132,7 +170,7 @@
         }
         triggerFunction = function(item) {
           if (sender) {
-            return item.event.apply(context, [].concat.apply([], [[sender], args]));
+            return item.event.apply(context, flatten([[sender], args]));
           } else {
             return item.event.apply(context, args);
           }
