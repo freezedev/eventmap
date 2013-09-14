@@ -73,3 +73,5 @@ myEventMap.trigger({name: 'fromwhere', useSender: true});
 (The sender can also be passed to constructor as a parameter.)
 
 TODO: Document repeatable and delayed events
+TODO: Shorthand functions
+TODO: Serializing and deserializing
