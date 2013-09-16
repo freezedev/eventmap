@@ -1,16 +1,23 @@
 'use strict'
 
+# hasOwnProperty shorthand
 hasProp = {}.hasOwnProperty
 
+# Default options, similar to _.defaults, but without the edge cases
+# of $.extend
 defaults = (opts, defOpts) ->
   opts = {} unless opts?
     
   for key, value of defOpts
     unless hasProp.call opts, key
-      opts[key] = value
+      if typeof value is 'object'
+        defaults opts[key], defOpts[key]
+      else
+        opts[key] = value
       
   opts
 
+# Flattens an array
 flatten = (arr) -> [].concat.call [], arr
 
 udefine 'eventmap', ['root'], (root) ->
@@ -19,8 +26,10 @@ udefine 'eventmap', ['root'], (root) ->
    
     constructor: (options) ->
       options = defaults options,
-        shorthandFunctions: true
-        shorthandFunctionContext: @
+        shorthandFunctions:
+          enabled: true
+          context: @
+          separator: '/'
       
       @events = {}
       @validEvents = []
@@ -49,6 +58,15 @@ udefine 'eventmap', ['root'], (root) ->
       @events = events
       true
 
+    bindShorthandFunction: (eventName) ->
+      return unless @options.shorthandFunctions.enabled
+      
+      bindSingleEvent = (evName) =>
+        unless hasProp.call @options.shorthandFunctions.context, eventName
+          @options.shorthandFunctions.context[eventName] = (args...) =>
+            @trigger.apply @, flatten(eventName, args)
+        
+
     on: (eventName, eventFunction) ->
       return unless eventFunction
 
@@ -60,15 +78,13 @@ udefine 'eventmap', ['root'], (root) ->
         id: -1
         type: ''
       
-      unless @events[eventName]
-        @events[eventName] = [eventDesc]
-      else
-        @events[eventName].push eventDesc
+      @events[eventName] or= {}
       
-      if @options.shorthandFunctions
-        unless hasProp.call @options.shorthandFunctionContext, eventName
-          @options.shorthandFunctionContext[eventName] = (args...) =>
-            @trigger.apply @, flatten(eventName, args)
+      @events[eventName]['now'] or= []
+
+      @events[eventName]['now'].push eventDesc
+      
+      @bindShorthandFunction eventName
       
       @
       
@@ -84,6 +100,25 @@ udefine 'eventmap', ['root'], (root) ->
       delete @events[eventName] if @events[eventName]
 
       @
+    
+    
+    before: (eventName, eventFunction) ->
+      return unless eventFunction
+      
+      @events[eventName] or= {}
+      
+      @events[eventName]['before'] or= []
+      
+      @events[eventName]['before'].push eventFunction
+      
+    after: (eventName, eventFunction) ->
+      return unless eventFunction
+      
+      @events[eventName] or= {}
+      
+      @events[eventName]['after'] or= []
+      
+      @events[eventName]['after'].push eventFunction
     
     clear: ->
       @events = {}
@@ -111,14 +146,21 @@ udefine 'eventmap', ['root'], (root) ->
       delay = 0 unless delay?
       
       
-      triggerFunction = (item) ->
-        if sender
-          item.event.apply context, flatten [[sender], args]
-        else
-          item.event.apply context, args
+      triggerFunction = (item) =>
+        argArray = if sender then flatten [[sender], args] else args
+        
+        beforeArr = @events[name]['before']
+        afterArr = @events[name]['after']
+        
+        # TODO: Return values from before should be in now and after
+        b.apply context, argArray for b in beforeArr if beforeArr
+        
+        item.event.apply context, argArray
+        
+        a.apply context, argArray for a in afterArr if afterArr
       
       # Walk through all events and call them
-      for i in @events[name]
+      for i in @events[name]['now']
         triggerEvent = ->
           if interval
             if repeat
@@ -133,9 +175,10 @@ udefine 'eventmap', ['root'], (root) ->
           null
         
         if delay
-          timeoutId = root.setTimeout ->
+          timeoutId = root.setTimeout (->
             triggerEvent.call @, i
             root.clearTimeout timeoutId
+          ), delay
         else
           triggerEvent.call @, i
 
