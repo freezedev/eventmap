@@ -157,7 +157,8 @@
         }
         (_base = this.events)[eventName] || (_base[eventName] = {});
         (_base1 = this.events[eventName])['before'] || (_base1['before'] = []);
-        return this.events[eventName]['before'].push(eventFunction);
+        this.events[eventName]['before'].push(eventFunction);
+        return this;
       };
 
       EventMap.prototype.after = function(eventName, eventFunction) {
@@ -167,7 +168,8 @@
         }
         (_base = this.events)[eventName] || (_base[eventName] = {});
         (_base1 = this.events[eventName])['after'] || (_base1['after'] = []);
-        return this.events[eventName]['after'].push(eventFunction);
+        this.events[eventName]['after'].push(eventFunction);
+        return this;
       };
 
       EventMap.prototype.clear = function() {
