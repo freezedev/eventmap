@@ -11,7 +11,8 @@ defaults = (opts, defOpts) ->
   for key, value of defOpts
     unless hasProp.call opts, key
       if typeof value is 'object'
-        defaults opts[key], defOpts[key]
+        opts[key] = {}
+        defaults opts[key], value
       else
         opts[key] = value
       
