@@ -26,7 +26,11 @@
     for (key in defOpts) {
       value = defOpts[key];
       if (!hasProp.call(opts, key)) {
-        opts[key] = value;
+        if (typeof value === 'object') {
+          defaults(opts[key], defOpts[key]);
+        } else {
+          opts[key] = value;
+        }
       }
     }
     return opts;
@@ -41,8 +45,11 @@
     return EventMap = (function() {
       function EventMap(options) {
         options = defaults(options, {
-          shorthandFunctions: true,
-          shorthandFunctionContext: this
+          shorthandFunctions: {
+            enabled: true,
+            context: this,
+            separator: '/'
+          }
         });
         this.events = {};
         this.validEvents = [];
@@ -83,9 +90,25 @@
         return true;
       };
 
-      EventMap.prototype.on = function(eventName, eventFunction) {
-        var eventDesc,
+      EventMap.prototype.bindShorthandFunction = function(eventName) {
+        var bindSingleEvent,
           _this = this;
+        if (!this.options.shorthandFunctions.enabled) {
+          return;
+        }
+        return bindSingleEvent = function(evName) {
+          if (!hasProp.call(_this.options.shorthandFunctions.context, eventName)) {
+            return _this.options.shorthandFunctions.context[eventName] = function() {
+              var args;
+              args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+              return _this.trigger.apply(_this, flatten(eventName, args));
+            };
+          }
+        };
+      };
+
+      EventMap.prototype.on = function(eventName, eventFunction) {
+        var eventDesc, _base, _base1;
         if (!eventFunction) {
           return;
         }
@@ -99,20 +122,10 @@
           id: -1,
           type: ''
         };
-        if (!this.events[eventName]) {
-          this.events[eventName] = [eventDesc];
-        } else {
-          this.events[eventName].push(eventDesc);
-        }
-        if (this.options.shorthandFunctions) {
-          if (!hasProp.call(this.options.shorthandFunctionContext, eventName)) {
-            this.options.shorthandFunctionContext[eventName] = function() {
-              var args;
-              args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-              return _this.trigger.apply(_this, flatten(eventName, args));
-            };
-          }
-        }
+        (_base = this.events)[eventName] || (_base[eventName] = {});
+        (_base1 = this.events[eventName])['now'] || (_base1['now'] = []);
+        this.events[eventName]['now'].push(eventDesc);
+        this.bindShorthandFunction(eventName);
         return this;
       };
 
@@ -136,6 +149,26 @@
         return this;
       };
 
+      EventMap.prototype.before = function(eventName, eventFunction) {
+        var _base, _base1;
+        if (!eventFunction) {
+          return;
+        }
+        (_base = this.events)[eventName] || (_base[eventName] = {});
+        (_base1 = this.events[eventName])['before'] || (_base1['before'] = []);
+        return this.events[eventName]['before'].push(eventFunction);
+      };
+
+      EventMap.prototype.after = function(eventName, eventFunction) {
+        var _base, _base1;
+        if (!eventFunction) {
+          return;
+        }
+        (_base = this.events)[eventName] || (_base[eventName] = {});
+        (_base1 = this.events[eventName])['after'] || (_base1['after'] = []);
+        return this.events[eventName]['after'].push(eventFunction);
+      };
+
       EventMap.prototype.clear = function() {
         this.events = {};
         this.validEvents = [];
@@ -143,7 +176,8 @@
       };
 
       EventMap.prototype.trigger = function() {
-        var args, context, delay, eventName, i, interval, name, repeat, sender, timeoutId, triggerEvent, triggerFunction, _i, _len, _ref;
+        var args, context, delay, eventName, i, interval, name, repeat, sender, timeoutId, triggerEvent, triggerFunction, _i, _len, _ref,
+          _this = this;
         eventName = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
         if (eventName == null) {
           return;
@@ -169,13 +203,27 @@
           delay = 0;
         }
         triggerFunction = function(item) {
-          if (sender) {
-            return item.event.apply(context, flatten([[sender], args]));
-          } else {
-            return item.event.apply(context, args);
+          var a, afterArr, argArray, b, beforeArr, _i, _j, _len, _len1, _results;
+          argArray = sender ? flatten([[sender], args]) : args;
+          beforeArr = _this.events[name]['before'];
+          afterArr = _this.events[name]['after'];
+          if (beforeArr) {
+            for (_i = 0, _len = beforeArr.length; _i < _len; _i++) {
+              b = beforeArr[_i];
+              b.apply(context, argArray);
+            }
+          }
+          item.event.apply(context, argArray);
+          if (afterArr) {
+            _results = [];
+            for (_j = 0, _len1 = afterArr.length; _j < _len1; _j++) {
+              a = afterArr[_j];
+              _results.push(a.apply(context, argArray));
+            }
+            return _results;
           }
         };
-        _ref = this.events[name];
+        _ref = this.events[name]['now'];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           i = _ref[_i];
           triggerEvent = function() {
@@ -194,10 +242,10 @@
             return null;
           };
           if (delay) {
-            timeoutId = root.setTimeout(function() {
+            timeoutId = root.setTimeout((function() {
               triggerEvent.call(this, i);
               return root.clearTimeout(timeoutId);
-            });
+            }), delay);
           } else {
             triggerEvent.call(this, i);
           }
