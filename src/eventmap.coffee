@@ -112,6 +112,8 @@ udefine 'eventmap', ['root'], (root) ->
       
       @events[eventName]['before'].push eventFunction
       
+      @
+      
     after: (eventName, eventFunction) ->
       return unless eventFunction
       
@@ -120,6 +122,8 @@ udefine 'eventmap', ['root'], (root) ->
       @events[eventName]['after'] or= []
       
       @events[eventName]['after'].push eventFunction
+      
+      @
     
     clear: ->
       @events = {}
