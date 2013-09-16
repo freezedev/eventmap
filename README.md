@@ -30,6 +30,7 @@ myEventMap.trigger('myevent');
 ```
 
 Register another event
+```javascript
 myEventMap.on('myevent', function() {
   console.log('My second event');
 });
@@ -58,19 +59,26 @@ Advanced usage
 
 Using the sender
 
-Every eventmap has a `sender` property, which can be used from where the event
-has been triggered.
+Every event can be triggered with a sender parameter, which is then the first
+parameter in the event.
 ```javascript
-myEventMap.sender = 'outerSpace';
-
 myEventMap.on('fromwhere', function(destination) {
   console.log('Coming from ' + destination);
 });
 
-myEventMap.trigger({name: 'fromwhere', useSender: true});
+myEventMap.trigger({name: 'fromwhere', sender: 'outerSpace'});
 // The first parameter is now the sender + all other parameters from .trigger follow after that
 ```
-(The sender can also be passed to constructor as a parameter.)
+The sender can be anything, be it a string, number, function, object etc.
+
+
+Shorthand functions
+
+If you are familiar with jQuery, you know that you ususally bind your event
+with `.on('click', function() {})` and you either trigger the event with
+`.trigger('click')` or `.click()`.
+
+
 
 TODO: Document repeatable and delayed events
 TODO: Shorthand functions
