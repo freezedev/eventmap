@@ -27,7 +27,8 @@
       value = defOpts[key];
       if (!hasProp.call(opts, key)) {
         if (typeof value === 'object') {
-          defaults(opts[key], defOpts[key]);
+          opts[key] = {};
+          defaults(opts[key], value);
         } else {
           opts[key] = value;
         }
