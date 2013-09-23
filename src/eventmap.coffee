@@ -91,7 +91,7 @@ udefine 'eventmap', ['root'], (root) ->
 
       @events[eventName]['now'].push eventDesc
       
-      @bindShorthandFunction eventName
+      @bind eventName
       
       @
       
