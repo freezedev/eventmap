@@ -1,7 +1,6 @@
 (function() {
   (function(name) {
     return udefine.configure(function(root) {
-      this.globals[name.toLowerCase()] = root[name];
       return this.inject[name.toLowerCase()] = {
         name: name,
         root: root
@@ -15,6 +14,12 @@
   'use strict';
   var defaults, flatten, hasProp,
     __slice = [].slice;
+
+  (function() {
+    return Array.isArray != null ? Array.isArray : Array.isArray = function(a) {
+      return a.push === Array.prototype.push && (a.length != null);
+    };
+  })();
 
   hasProp = {}.hasOwnProperty;
 
@@ -179,11 +184,17 @@
       };
 
       EventMap.prototype.trigger = function() {
-        var args, context, delay, eventName, i, interval, name, repeat, sender, timeoutId, triggerEvent, triggerFunction, _i, _len, _ref,
+        var args, context, delay, e, eventName, i, interval, name, repeat, sender, timeoutId, triggerEvent, triggerFunction, _i, _j, _len, _len1, _ref,
           _this = this;
         eventName = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
         if (eventName == null) {
           return;
+        }
+        if (Array.isArray(eventName)) {
+          for (_i = 0, _len = eventName.length; _i < _len; _i++) {
+            e = eventName[_i];
+            trigger(e, args);
+          }
         }
         if (typeof eventName === 'object') {
           name = eventName.name, interval = eventName.interval, repeat = eventName.repeat, context = eventName.context, delay = eventName.delay, sender = eventName.sender;
@@ -200,23 +211,30 @@
           repeat = false;
         }
         if (context == null) {
-          context = this;
+          context = {};
         }
         if (delay == null) {
           delay = 0;
         }
         triggerFunction = function(item) {
-          var a, afterArr, argArray, b, beforeArr, _i, _j, _len, _len1, _results;
+          var a, afterArr, argArray, b, beforeArr, retBefore, retNow, _j, _len1, _results;
           argArray = sender ? flatten([[sender], args]) : args;
           beforeArr = _this.events[name]['before'];
           afterArr = _this.events[name]['after'];
           if (beforeArr) {
-            for (_i = 0, _len = beforeArr.length; _i < _len; _i++) {
-              b = beforeArr[_i];
-              b.apply(context, argArray);
-            }
+            retBefore = (function() {
+              var _j, _len1, _results;
+              _results = [];
+              for (_j = 0, _len1 = beforeArr.length; _j < _len1; _j++) {
+                b = beforeArr[_j];
+                _results.push(b.apply(context, argArray));
+              }
+              return _results;
+            })();
           }
-          item.event.apply(context, argArray);
+          context.before = retBefore;
+          retNow = item.event.apply(context, argArray);
+          context.now = retNow;
           if (afterArr) {
             _results = [];
             for (_j = 0, _len1 = afterArr.length; _j < _len1; _j++) {
@@ -227,8 +245,8 @@
           }
         };
         _ref = this.events[name]['now'];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          i = _ref[_i];
+        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+          i = _ref[_j];
           triggerEvent = function() {
             if (interval) {
               if (repeat) {
