@@ -19,6 +19,9 @@
     "chai": "*",
     "matchdep": "*"
   },
+  "scripts": {
+    "test": "grunt test"
+  },
   "readmeFilename": "README.md",
   "author": "Johannes Stein",
   "license": "Public domain",
