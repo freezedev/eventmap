@@ -7,13 +7,17 @@
     "type": "git",
     "url": "http://github.com/freezedev/eventmap.git"
   },
+  "dependencies": {
+    "udefine": "~0.8.2"
+  },
   "devDependencies": {
     "grunt": "0.4.x",
     "grunt-contrib-coffee": "*",
     "grunt-contrib-uglify": "*",
     "grunt-coffeelint": "*",
     "grunt-mocha-test": "*",
-    "chai": "*"
+    "chai": "*",
+    "matchdep": "*"
   },
   "readmeFilename": "README.md",
   "author": "Johannes Stein",
