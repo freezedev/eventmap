@@ -7,8 +7,12 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON 'package.json'
     coffee:
       compile:
-        files:
-          'dist/<%= pkg.name %>.js': ['udefine/*.coffee', 'src/*.coffee']
+        files: ['dist/<%= pkg.name %>.js': ['udefine/*.coffee', 'src/*.coffee']
+        {
+          expand: true
+          src: ['test/*.coffee']
+          ext: '.js'
+        }]
     uglify:
       options:
         banner: banner
