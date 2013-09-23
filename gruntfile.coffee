@@ -21,9 +21,7 @@ module.exports = (grunt) ->
       test: ['test/**/*.coffee'],
       grunt: ['Gruntfile.coffee']
 
-  grunt.loadNpmTasks 'grunt-contrib-coffee'
-  grunt.loadNpmTasks 'grunt-contrib-uglify'
-  grunt.loadNpmTasks 'grunt-coffeelint'
+  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks)
 
   grunt.registerTask 'test', ['coffeelint']
   grunt.registerTask 'default', ['coffeelint', 'coffee', 'uglify']
