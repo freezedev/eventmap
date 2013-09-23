@@ -65,11 +65,14 @@ udefine 'eventmap', ['root'], (root) ->
     bindShorthandFunction: (eventName) ->
       return unless @options.shorthandFunctions.enabled
       
+      eventName = [eventName] unless Array.isArray eventName
+      
       bindSingleEvent = (evName) =>
         unless hasProp.call @options.shorthandFunctions.context, eventName
           @options.shorthandFunctions.context[eventName] = (args...) =>
             @trigger.apply @, flatten(eventName, args)
-        
+      
+      bindSingleEvent e for e in eventName
 
     on: (eventName, eventFunction) ->
       return unless eventFunction
@@ -139,7 +142,7 @@ udefine 'eventmap', ['root'], (root) ->
       return unless eventName?
       
       # Call multiple events
-      trigger e, args for e in eventName if Array.isArray eventName
+      @trigger e, args for e in eventName if Array.isArray eventName
 
       # Differentiate between eventName being an object or a string
       if typeof eventName is 'object'
