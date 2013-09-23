@@ -153,7 +153,7 @@ udefine 'eventmap', ['root'], (root) ->
       # Set default values
       interval = 0 unless interval?
       repeat = false unless repeat?
-      context = @ unless context?
+      context = {} unless context?
       delay = 0 unless delay?
       
       
