@@ -12,7 +12,7 @@
     "grunt-contrib-coffee": "*",
     "grunt-contrib-uglify": "*",
     "grunt-coffeelint": "*",
-    "mocha": "*",
+    "grunt-mocha-test": "*",
     "chai": "*"
   },
   "readmeFilename": "README.md",
