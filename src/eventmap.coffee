@@ -1,5 +1,8 @@
 'use strict'
 
+# ES5 shims
+do -> Array.isArray ?= (a) -> a.push is Array.prototype.push and a.length?
+
 # hasOwnProperty shorthand
 hasProp = {}.hasOwnProperty
 
@@ -134,6 +137,9 @@ udefine 'eventmap', ['root'], (root) ->
     trigger: (eventName, args...) ->
       # Break if eventName parameter has been omitted
       return unless eventName?
+      
+      # Call multiple events
+      trigger e, args for e in eventName if Array.isArray eventName
 
       # Differentiate between eventName being an object or a string
       if typeof eventName is 'object'
@@ -151,16 +157,20 @@ udefine 'eventmap', ['root'], (root) ->
       delay = 0 unless delay?
       
       
+      # TODO: Add support for asynchronous functions
       triggerFunction = (item) =>
         argArray = if sender then flatten [[sender], args] else args
         
         beforeArr = @events[name]['before']
         afterArr = @events[name]['after']
         
-        # TODO: Return values from before should be in now and after
-        b.apply context, argArray for b in beforeArr if beforeArr
+        retBefore = (b.apply context, argArray for b in beforeArr) if beforeArr
         
-        item.event.apply context, argArray
+        context.before = retBefore
+        
+        retNow = item.event.apply context, argArray
+        
+        context.now = retNow
         
         a.apply context, argArray for a in afterArr if afterArr
       
