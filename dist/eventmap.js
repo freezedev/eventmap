@@ -96,13 +96,16 @@
         return true;
       };
 
-      EventMap.prototype.bindShorthandFunction = function(eventName) {
-        var bindSingleEvent,
+      EventMap.prototype.bind = function(eventName) {
+        var bindSingleEvent, e, _i, _len, _results,
           _this = this;
         if (!this.options.shorthandFunctions.enabled) {
           return;
         }
-        return bindSingleEvent = function(evName) {
+        if (!Array.isArray(eventName)) {
+          eventName = [eventName];
+        }
+        bindSingleEvent = function(evName) {
           if (!hasProp.call(_this.options.shorthandFunctions.context, eventName)) {
             return _this.options.shorthandFunctions.context[eventName] = function() {
               var args;
@@ -111,6 +114,12 @@
             };
           }
         };
+        _results = [];
+        for (_i = 0, _len = eventName.length; _i < _len; _i++) {
+          e = eventName[_i];
+          _results.push(bindSingleEvent(e));
+        }
+        return _results;
       };
 
       EventMap.prototype.on = function(eventName, eventFunction) {
@@ -131,7 +140,7 @@
         (_base = this.events)[eventName] || (_base[eventName] = {});
         (_base1 = this.events[eventName])['now'] || (_base1['now'] = []);
         this.events[eventName]['now'].push(eventDesc);
-        this.bindShorthandFunction(eventName);
+        this.bind(eventName);
         return this;
       };
 
@@ -193,7 +202,7 @@
         if (Array.isArray(eventName)) {
           for (_i = 0, _len = eventName.length; _i < _len; _i++) {
             e = eventName[_i];
-            trigger(e, args);
+            this.trigger(e, args);
           }
         }
         if (typeof eventName === 'object') {
