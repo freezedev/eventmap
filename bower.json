@@ -13,6 +13,10 @@
     "gruntfile.coffee"
   ],
   "dependencies": {
-    "udefine": "~0.7.3"
+    "udefine": "~0.8.2"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*"
   }
 }
