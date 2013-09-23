@@ -1,5 +1,8 @@
 EventMap
 ========
+[![Build Status](https://travis-ci.org/freezedev/eventmap.png?branch=master)](https://travis-ci.org/freezedev/eventmap)
+[![Dependency Status](https://david-dm.org/freezedev/eventmap.png)](https://david-dm.org/freezedev/eventmap)
+[![devDependency Status](https://david-dm.org/freezedev/eventmap/dev-status.png)](https://david-dm.org/freezedev/eventmap#info=devDependencies)
 
 An eventmap provides a mechanism to register events and call them at a later point in time.
 
