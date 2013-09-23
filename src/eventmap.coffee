@@ -62,7 +62,7 @@ udefine 'eventmap', ['root'], (root) ->
       @events = events
       true
 
-    bindShorthandFunction: (eventName) ->
+    bind: (eventName) ->
       return unless @options.shorthandFunctions.enabled
       
       eventName = [eventName] unless Array.isArray eventName
