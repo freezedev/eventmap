@@ -24,8 +24,5 @@
   },
   "readmeFilename": "README.md",
   "author": "Johannes Stein",
-  "license": "Public domain",
-  "dependencies": {
-    "udefine": "~0.7.5"
-  }
+  "license": "Public domain"
 }
