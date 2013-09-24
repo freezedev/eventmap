@@ -226,28 +226,21 @@
           delay = 0;
         }
         triggerFunction = function(item) {
-          var a, afterArr, argArray, b, beforeArr, retBefore, retNow, _j, _len1, _results;
+          var a, afterArr, argArray, b, beforeArr, _j, _k, _len1, _len2, _results;
           argArray = sender ? flatten([[sender], args]) : args;
           beforeArr = _this.events[name]['before'];
           afterArr = _this.events[name]['after'];
           if (beforeArr) {
-            retBefore = (function() {
-              var _j, _len1, _results;
-              _results = [];
-              for (_j = 0, _len1 = beforeArr.length; _j < _len1; _j++) {
-                b = beforeArr[_j];
-                _results.push(b.apply(context, argArray));
-              }
-              return _results;
-            })();
+            for (_j = 0, _len1 = beforeArr.length; _j < _len1; _j++) {
+              b = beforeArr[_j];
+              b.apply(context, argArray);
+            }
           }
-          context.before = retBefore;
-          retNow = item.event.apply(context, argArray);
-          context.now = retNow;
+          item.event.apply(context, argArray);
           if (afterArr) {
             _results = [];
-            for (_j = 0, _len1 = afterArr.length; _j < _len1; _j++) {
-              a = afterArr[_j];
+            for (_k = 0, _len2 = afterArr.length; _k < _len2; _k++) {
+              a = afterArr[_k];
               _results.push(a.apply(context, argArray));
             }
             return _results;
