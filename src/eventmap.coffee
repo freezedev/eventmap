@@ -167,14 +167,13 @@ udefine 'eventmap', ['root'], (root) ->
         beforeArr = @events[name]['before']
         afterArr = @events[name]['after']
         
-        retBefore = (b.apply context, argArray for b in beforeArr) if beforeArr
+        # Call before events
+        b.apply context, argArray for b in beforeArr if beforeArr
         
-        context.before = retBefore
+        # Call actual events
+        item.event.apply context, argArray
         
-        retNow = item.event.apply context, argArray
-        
-        context.now = retNow
-        
+        # Call after events
         a.apply context, argArray for a in afterArr if afterArr
       
       # Walk through all events and call them
