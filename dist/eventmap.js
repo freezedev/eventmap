@@ -1,10 +1,12 @@
 (function() {
   (function(name) {
     return udefine.configure(function(root) {
-      return this.inject[name.toLowerCase()] = {
-        name: name,
-        root: root
-      };
+      return this.globals(function() {
+        return udefine.inject.add(name.toLowerCase(), {
+          name: name,
+          root: root
+        });
+      });
     });
   })('EventMap');
 
@@ -280,5 +282,11 @@
 
     })();
   });
+
+  if (udefine.env.commonjs) {
+    udefine.require('eventmap', function(EventMap) {
+      return module.exports = EventMap;
+    });
+  }
 
 }).call(this);
