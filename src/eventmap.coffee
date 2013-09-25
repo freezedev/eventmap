@@ -200,3 +200,7 @@ udefine 'eventmap', ['root'], (root) ->
           triggerEvent.call @, i
 
       @
+
+
+if udefine.env.commonjs
+  udefine.require 'eventmap', (EventMap) -> module.exports = EventMap
