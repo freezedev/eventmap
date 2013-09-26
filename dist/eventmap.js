@@ -55,7 +55,6 @@
         options = defaults(options, {
           shorthandFunctions: {
             enabled: true,
-            context: this,
             separator: '/'
           }
         });
@@ -98,9 +97,12 @@
         return true;
       };
 
-      EventMap.prototype.bind = function(eventName) {
-        var bindSingleEvent, e, _i, _len, _results,
+      EventMap.prototype.bind = function(eventName, context) {
+        var bindSingleEvent, e, _i, _len,
           _this = this;
+        if (context == null) {
+          context = this;
+        }
         if (!this.options.shorthandFunctions.enabled) {
           return;
         }
@@ -108,20 +110,19 @@
           eventName = [eventName];
         }
         bindSingleEvent = function(evName) {
-          if (!hasProp.call(_this.options.shorthandFunctions.context, eventName)) {
-            return _this.options.shorthandFunctions.context[eventName] = function() {
+          if (!hasProp.call(context, evName)) {
+            return context[evName] = function() {
               var args;
               args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-              return _this.trigger.apply(_this, flatten(eventName, args));
+              return this.trigger.apply(this, flatten(evName, args));
             };
           }
         };
-        _results = [];
         for (_i = 0, _len = eventName.length; _i < _len; _i++) {
           e = eventName[_i];
-          _results.push(bindSingleEvent(e));
+          bindSingleEvent(e);
         }
-        return _results;
+        return this;
       };
 
       EventMap.prototype.on = function(eventName, eventFunction) {
