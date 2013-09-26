@@ -32,7 +32,6 @@ udefine 'eventmap', ['root'], (root) ->
       options = defaults options,
         shorthandFunctions:
           enabled: true
-          context: @
           separator: '/'
       
       @events = {}
@@ -62,17 +61,19 @@ udefine 'eventmap', ['root'], (root) ->
       @events = events
       true
 
-    bind: (eventName) ->
+    bind: (eventName, context = @) ->
       return unless @options.shorthandFunctions.enabled
       
       eventName = [eventName] unless Array.isArray eventName
       
       bindSingleEvent = (evName) =>
-        unless hasProp.call @options.shorthandFunctions.context, eventName
-          @options.shorthandFunctions.context[eventName] = (args...) =>
-            @trigger.apply @, flatten(eventName, args)
-      
+        unless hasProp.call context, evName
+          context[evName] = (args...) ->
+            @trigger.apply @, flatten(evName, args)
+            
       bindSingleEvent e for e in eventName
+      
+      @
 
     on: (eventName, eventFunction) ->
       return unless eventFunction
