@@ -97,7 +97,7 @@ udefine 'eventmap', ['root'], (root) ->
       @
       
     off: (eventName) ->
-      return unless eventName
+      return unless eventName or @events[eventName]
       
       eventType = @events[eventName].type
 
