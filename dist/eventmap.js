@@ -149,24 +149,25 @@
 
       EventMap.prototype.off = function(eventName) {
         var e, eventType, _i, _len, _ref;
-        if (!(eventName || this.events[eventName] || this.events[eventName]['now'])) {
-          return;
-        }
-        _ref = this.events[eventName]['now'];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          e = _ref[_i];
-          eventType = e.type;
-          if (eventType === 'once' || eventType === 'repeat') {
-            if (eventType === 'repeat') {
-              root.clearInterval(e.id);
-            }
-            if (eventType === 'once') {
-              root.clearTimeout(e.id);
+        if (eventName && this.events[eventName] && this.events[eventName]['now']) {
+          _ref = this.events[eventName]['now'];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            e = _ref[_i];
+            eventType = e.type;
+            if (eventType === 'once' || eventType === 'repeat') {
+              if (eventType === 'repeat') {
+                root.clearInterval(e.id);
+              }
+              if (eventType === 'once') {
+                root.clearTimeout(e.id);
+              }
             }
           }
-        }
-        if (this.events[eventName]) {
-          delete this.events[eventName];
+          if (this.events[eventName]) {
+            delete this.events[eventName];
+          }
+        } else {
+          return;
         }
         return this;
       };

@@ -97,17 +97,17 @@ udefine 'eventmap', ['root'], (root) ->
       @
       
     off: (eventName) ->
-      unless eventName or @events[eventName] or @events[eventName]['now']
-        return
-      
-      for e in @events[eventName]['now']
-        eventType = e.type
+      if eventName and @events[eventName] and @events[eventName]['now']
+        for e in @events[eventName]['now']
+          eventType = e.type
+    
+          if eventType is 'once' or eventType is 'repeat'
+            root.clearInterval e.id if eventType is 'repeat'
+            root.clearTimeout e.id if eventType is 'once'
   
-        if eventType is 'once' or eventType is 'repeat'
-          root.clearInterval e.id if eventType is 'repeat'
-          root.clearTimeout e.id if eventType is 'once'
-
-      delete @events[eventName] if @events[eventName]
+        delete @events[eventName] if @events[eventName]
+      else
+        return
 
       @
     
