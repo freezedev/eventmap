@@ -149,7 +149,7 @@
 
       EventMap.prototype.off = function(eventName) {
         var eventType;
-        if (!eventName) {
+        if (!(eventName || this.events[eventName])) {
           return;
         }
         eventType = this.events[eventName].type;
