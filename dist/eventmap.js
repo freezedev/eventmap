@@ -256,10 +256,14 @@
             if (interval) {
               if (repeat) {
                 i.type = 'repeat';
-                i.id = root.setInterval(triggerFunction, interval);
+                i.id = root.setInterval((function() {
+                  return triggerFunction.call(this, i);
+                }), interval);
               } else {
                 i.type = 'once';
-                i.id = root.setTimeout(triggerFunction, interval);
+                i.id = root.setTimeout((function() {
+                  return triggerFunction.call(this, i);
+                }), interval);
               }
             } else {
               i.type = 'direct';
