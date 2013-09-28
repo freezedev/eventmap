@@ -148,17 +148,21 @@
       };
 
       EventMap.prototype.off = function(eventName) {
-        var eventType;
-        if (!(eventName || this.events[eventName])) {
+        var e, eventType, _i, _len, _ref;
+        if (!(eventName || this.events[eventName] || this.events[eventName]['now'])) {
           return;
         }
-        eventType = this.events[eventName].type;
-        if (eventType === 'once' || eventType === 'repeat') {
-          if (eventType === 'repeat') {
-            root.clearInterval(this.events[eventName].id);
-          }
-          if (eventType === 'once') {
-            root.clearTimeout(this.events[eventName].id);
+        _ref = this.events[eventName]['now'];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          e = _ref[_i];
+          eventType = e.type;
+          if (eventType === 'once' || eventType === 'repeat') {
+            if (eventType === 'repeat') {
+              root.clearInterval(e.id);
+            }
+            if (eventType === 'once') {
+              root.clearTimeout(e.id);
+            }
           }
         }
         if (this.events[eventName]) {
@@ -231,8 +235,8 @@
         triggerFunction = function(item) {
           var a, afterArr, argArray, b, beforeArr, _j, _k, _len1, _len2, _results;
           argArray = sender ? flatten([[sender], args]) : args;
-          beforeArr = _this.events[name]['before'];
-          afterArr = _this.events[name]['after'];
+          beforeArr = _this.events[name]['before'] || [];
+          afterArr = _this.events[name]['after'] || [];
           if (beforeArr) {
             for (_j = 0, _len1 = beforeArr.length; _j < _len1; _j++) {
               b = beforeArr[_j];
