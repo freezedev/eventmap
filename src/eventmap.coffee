@@ -97,13 +97,15 @@ udefine 'eventmap', ['root'], (root) ->
       @
       
     off: (eventName) ->
-      return unless eventName or @events[eventName]
+      unless eventName or @events[eventName] or @events[eventName]['now']
+        return
       
-      eventType = @events[eventName].type
-
-      if eventType is 'once' or eventType is 'repeat'
-        root.clearInterval @events[eventName].id if eventType is 'repeat'
-        root.clearTimeout @events[eventName].id if eventType is 'once'
+      for e in @events[eventName]['now']
+        eventType = e.type
+  
+        if eventType is 'once' or eventType is 'repeat'
+          root.clearInterval e.id if eventType is 'repeat'
+          root.clearTimeout e.id if eventType is 'once'
 
       delete @events[eventName] if @events[eventName]
 
@@ -165,8 +167,8 @@ udefine 'eventmap', ['root'], (root) ->
       triggerFunction = (item) =>
         argArray = if sender then flatten [[sender], args] else args
         
-        beforeArr = @events[name]['before']
-        afterArr = @events[name]['after']
+        beforeArr = @events[name]['before'] || []
+        afterArr = @events[name]['after'] || []
         
         # Call before events
         b.apply context, argArray for b in beforeArr if beforeArr
