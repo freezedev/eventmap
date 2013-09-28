@@ -183,10 +183,10 @@ udefine 'eventmap', ['root'], (root) ->
           if interval
             if repeat
               i.type = 'repeat'
-              i.id = root.setInterval triggerFunction, interval
+              i.id = root.setInterval (-> triggerFunction.call(@, i)), interval
             else
               i.type = 'once'
-              i.id = root.setTimeout triggerFunction, interval
+              i.id = root.setTimeout (-> triggerFunction.call(@, i)), interval
           else
             i.type = 'direct'
             triggerFunction.call @, i
