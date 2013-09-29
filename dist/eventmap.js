@@ -235,6 +235,9 @@
         }
         triggerFunction = function(item) {
           var a, afterArr, argArray, b, beforeArr, _j, _k, _len1, _len2, _results;
+          if (!_this.events[name]) {
+            return;
+          }
           argArray = sender ? flatten([[sender], args]) : args;
           beforeArr = _this.events[name]['before'] || [];
           afterArr = _this.events[name]['after'] || [];

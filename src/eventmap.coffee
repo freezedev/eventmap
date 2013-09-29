@@ -165,6 +165,9 @@ udefine 'eventmap', ['root'], (root) ->
       
       # TODO: Add support for asynchronous functions
       triggerFunction = (item) =>
+        # Quick fix, refactor in combination with repeatable/intervaled events
+        return unless @events[name]
+        
         argArray = if sender then flatten [[sender], args] else args
         
         beforeArr = @events[name]['before'] || []
