@@ -58,6 +58,7 @@
             separator: '/'
           }
         });
+        this.sender = null;
         this.events = {};
         this.validEvents = [];
         this.options = options;
@@ -114,7 +115,7 @@
             return context[evName] = function() {
               var args;
               args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-              return this.trigger.apply(this, flatten(evName, args));
+              return this.trigger.apply(this, flatten([evName, args]));
             };
           }
         };
@@ -227,9 +228,14 @@
         if (delay == null) {
           delay = 0;
         }
+        if (sender == null) {
+          sender = this.sender;
+        }
+        if (sender == null) {
+          context.sender = sender;
+        }
         triggerFunction = function() {
-          var afterArr, argArray, beforeArr, callEvents, nowArr;
-          argArray = sender ? flatten([[sender], args]) : args;
+          var afterArr, beforeArr, callEvents, nowArr;
           nowArr = _this.events[name]['now'] || [];
           beforeArr = _this.events[name]['before'] || [];
           afterArr = _this.events[name]['after'] || [];
@@ -238,7 +244,7 @@
             if (eventArr != null) {
               for (_j = 0, _len1 = eventArr.length; _j < _len1; _j++) {
                 e = eventArr[_j];
-                e.apply(context, argArray);
+                e.apply(context, args);
               }
             }
             return null;
