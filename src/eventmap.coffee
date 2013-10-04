@@ -81,29 +81,25 @@ udefine 'eventmap', ['root'], (root) ->
       if @validEvents.length > 0
         return if @validEvents.indexOf(eventName) is -1
       
-      eventDesc =
-        event: eventFunction
+      @events[eventName] or=
         id: -1
         type: ''
       
-      @events[eventName] or= {}
-      
       @events[eventName]['now'] or= []
 
-      @events[eventName]['now'].push eventDesc
+      @events[eventName]['now'].push eventFunction
       
       @bind eventName
       
       @
       
     off: (eventName) ->
-      if eventName and @events[eventName] and @events[eventName]['now']
-        for e in @events[eventName]['now']
-          eventType = e.type
-    
-          if eventType is 'once' or eventType is 'repeat'
-            root.clearInterval e.id if eventType is 'repeat'
-            root.clearTimeout e.id if eventType is 'once'
+      if eventName and @events[eventName]
+        {id, type} = @events[eventName]
+  
+        if type is 'once' or type is 'repeat'
+          root.clearInterval id if type is 'repeat'
+          root.clearTimeout id if type is 'once'
   
         delete @events[eventName] if @events[eventName]
       else
@@ -164,47 +160,50 @@ udefine 'eventmap', ['root'], (root) ->
       
       
       # TODO: Add support for asynchronous functions
-      triggerFunction = (item) =>
-        # Quick fix, refactor in combination with repeatable/intervaled events
-        return unless @events[name]
-        
+      triggerFunction = =>
         argArray = if sender then flatten [[sender], args] else args
         
+        nowArr = @events[name]['now'] || []
         beforeArr = @events[name]['before'] || []
         afterArr = @events[name]['after'] || []
         
-        # Call before events
-        b.apply context, argArray for b in beforeArr if beforeArr
-        
-        # Call actual events
-        item.event.apply context, argArray
-        
-        # Call after events
-        a.apply context, argArray for a in afterArr if afterArr
-      
-      # Walk through all events and call them
-      for i in @events[name]['now']
-        triggerEvent = ->
-          if interval
-            if repeat
-              i.type = 'repeat'
-              i.id = root.setInterval (-> triggerFunction.call(@, i)), interval
-            else
-              i.type = 'once'
-              i.id = root.setTimeout (-> triggerFunction.call(@, i)), interval
-          else
-            i.type = 'direct'
-            triggerFunction.call @, i
+        callEvents = (eventArr) ->
+          e.apply context, argArray for e in eventArr if eventArr?
           null
         
-        if delay
-          timeoutId = root.setTimeout (->
-            triggerEvent.call @, i
-            root.clearTimeout timeoutId
-          ), delay
+        # Call before events
+        callEvents beforeArr
+        
+        # Call actual events
+        callEvents nowArr
+        
+        # Call after events
+        callEvents afterArr
+      
+      # Call event
+      ev = @events[name]
+      
+      triggerEvent = ->
+        if interval
+          if repeat
+            ev.type = 'repeat'
+            ev.id = root.setInterval (-> triggerFunction.call(@)), interval
+          else
+            ev.type = 'once'
+            ev.id = root.setTimeout (-> triggerFunction.call(@)), interval
         else
-          triggerEvent.call @, i
-
+          ev.type = 'direct'
+          triggerFunction.call @
+        null
+      
+      if delay
+        timeoutId = root.setTimeout (->
+          triggerEvent.call @
+          root.clearTimeout timeoutId
+        ), delay
+      else
+        triggerEvent.call @
+      
       @
 
 
