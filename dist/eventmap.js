@@ -126,7 +126,7 @@
       };
 
       EventMap.prototype.on = function(eventName, eventFunction) {
-        var eventDesc, _base, _base1;
+        var _base, _base1;
         if (!eventFunction) {
           return;
         }
@@ -135,32 +135,26 @@
             return;
           }
         }
-        eventDesc = {
-          event: eventFunction,
+        (_base = this.events)[eventName] || (_base[eventName] = {
           id: -1,
           type: ''
-        };
-        (_base = this.events)[eventName] || (_base[eventName] = {});
+        });
         (_base1 = this.events[eventName])['now'] || (_base1['now'] = []);
-        this.events[eventName]['now'].push(eventDesc);
+        this.events[eventName]['now'].push(eventFunction);
         this.bind(eventName);
         return this;
       };
 
       EventMap.prototype.off = function(eventName) {
-        var e, eventType, _i, _len, _ref;
-        if (eventName && this.events[eventName] && this.events[eventName]['now']) {
-          _ref = this.events[eventName]['now'];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            e = _ref[_i];
-            eventType = e.type;
-            if (eventType === 'once' || eventType === 'repeat') {
-              if (eventType === 'repeat') {
-                root.clearInterval(e.id);
-              }
-              if (eventType === 'once') {
-                root.clearTimeout(e.id);
-              }
+        var id, type, _ref;
+        if (eventName && this.events[eventName]) {
+          _ref = this.events[eventName], id = _ref.id, type = _ref.type;
+          if (type === 'once' || type === 'repeat') {
+            if (type === 'repeat') {
+              root.clearInterval(id);
+            }
+            if (type === 'once') {
+              root.clearTimeout(id);
             }
           }
           if (this.events[eventName]) {
@@ -201,7 +195,7 @@
       };
 
       EventMap.prototype.trigger = function() {
-        var args, context, delay, e, eventName, i, interval, name, repeat, sender, timeoutId, triggerEvent, triggerFunction, _i, _j, _len, _len1, _ref,
+        var args, context, delay, e, ev, eventName, interval, name, repeat, sender, timeoutId, triggerEvent, triggerFunction, _i, _len, _ref,
           _this = this;
         eventName = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
         if (eventName == null) {
@@ -218,7 +212,7 @@
         } else {
           name = eventName;
         }
-        if (!this.events[name]) {
+        if (((_ref = this.events[name]) != null ? _ref['now'] : void 0) == null) {
           return;
         }
         if (interval == null) {
@@ -233,60 +227,53 @@
         if (delay == null) {
           delay = 0;
         }
-        triggerFunction = function(item) {
-          var a, afterArr, argArray, b, beforeArr, _j, _k, _len1, _len2, _results;
-          if (!_this.events[name]) {
-            return;
-          }
+        triggerFunction = function() {
+          var afterArr, argArray, beforeArr, callEvents, nowArr;
           argArray = sender ? flatten([[sender], args]) : args;
+          nowArr = _this.events[name]['now'] || [];
           beforeArr = _this.events[name]['before'] || [];
           afterArr = _this.events[name]['after'] || [];
-          if (beforeArr) {
-            for (_j = 0, _len1 = beforeArr.length; _j < _len1; _j++) {
-              b = beforeArr[_j];
-              b.apply(context, argArray);
-            }
-          }
-          item.event.apply(context, argArray);
-          if (afterArr) {
-            _results = [];
-            for (_k = 0, _len2 = afterArr.length; _k < _len2; _k++) {
-              a = afterArr[_k];
-              _results.push(a.apply(context, argArray));
-            }
-            return _results;
-          }
-        };
-        _ref = this.events[name]['now'];
-        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-          i = _ref[_j];
-          triggerEvent = function() {
-            if (interval) {
-              if (repeat) {
-                i.type = 'repeat';
-                i.id = root.setInterval((function() {
-                  return triggerFunction.call(this, i);
-                }), interval);
-              } else {
-                i.type = 'once';
-                i.id = root.setTimeout((function() {
-                  return triggerFunction.call(this, i);
-                }), interval);
+          callEvents = function(eventArr) {
+            var _j, _len1;
+            if (eventArr != null) {
+              for (_j = 0, _len1 = eventArr.length; _j < _len1; _j++) {
+                e = eventArr[_j];
+                e.apply(context, argArray);
               }
-            } else {
-              i.type = 'direct';
-              triggerFunction.call(this, i);
             }
             return null;
           };
-          if (delay) {
-            timeoutId = root.setTimeout((function() {
-              triggerEvent.call(this, i);
-              return root.clearTimeout(timeoutId);
-            }), delay);
+          callEvents(beforeArr);
+          callEvents(nowArr);
+          return callEvents(afterArr);
+        };
+        ev = this.events[name];
+        triggerEvent = function() {
+          if (interval) {
+            if (repeat) {
+              ev.type = 'repeat';
+              ev.id = root.setInterval((function() {
+                return triggerFunction.call(this);
+              }), interval);
+            } else {
+              ev.type = 'once';
+              ev.id = root.setTimeout((function() {
+                return triggerFunction.call(this);
+              }), interval);
+            }
           } else {
-            triggerEvent.call(this, i);
+            ev.type = 'direct';
+            triggerFunction.call(this);
           }
+          return null;
+        };
+        if (delay) {
+          timeoutId = root.setTimeout((function() {
+            triggerEvent.call(this);
+            return root.clearTimeout(timeoutId);
+          }), delay);
+        } else {
+          triggerEvent.call(this);
         }
         return this;
       };
