@@ -150,7 +150,8 @@ udefine 'eventmap', ['root'], (root) ->
         name = eventName
 
       # Break if event doesn't exist
-      return unless @events[name]
+      # Also break if there are events defined in "now"
+      return unless @events[name]?['now']?
 
       # Set default values
       interval = 0 unless interval?
