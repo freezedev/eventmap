@@ -34,6 +34,7 @@ udefine 'eventmap', ['root'], (root) ->
           enabled: true
           separator: '/'
       
+      @sender = null
       @events = {}
       @validEvents = []
       
@@ -69,7 +70,7 @@ udefine 'eventmap', ['root'], (root) ->
       bindSingleEvent = (evName) =>
         unless hasProp.call context, evName
           context[evName] = (args...) ->
-            @trigger.apply @, flatten(evName, args)
+            @trigger.apply @, flatten([evName, args])
             
       bindSingleEvent e for e in eventName
       
@@ -158,18 +159,18 @@ udefine 'eventmap', ['root'], (root) ->
       repeat = false unless repeat?
       context = {} unless context?
       delay = 0 unless delay?
+      sender = @sender unless sender?
       
+      context.sender = sender unless sender?
       
       # TODO: Add support for asynchronous functions
       triggerFunction = =>
-        argArray = if sender then flatten [[sender], args] else args
-        
         nowArr = @events[name]['now'] || []
         beforeArr = @events[name]['before'] || []
         afterArr = @events[name]['after'] || []
         
         callEvents = (eventArr) ->
-          e.apply context, argArray for e in eventArr if eventArr?
+          e.apply context, args for e in eventArr if eventArr?
           null
         
         # Call before events
