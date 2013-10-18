@@ -169,8 +169,17 @@ udefine 'eventmap', ['root'], (root) ->
         beforeArr = @events[name]['before'] || []
         afterArr = @events[name]['after'] || []
         
-        callEvents = (eventArr) ->
-          e.apply context, args for e in eventArr if eventArr?
+        callEvents = (eventArr) =>
+          if eventArr?
+            for event in eventArr
+              if typeof event is 'string'
+                @trigger event, args
+              else
+                if Array.isArray event
+                  for e in event
+                    @trigger e, args
+                else
+                  event.apply context, args
           null
         
         # Call before events
