@@ -240,11 +240,22 @@
           beforeArr = _this.events[name]['before'] || [];
           afterArr = _this.events[name]['after'] || [];
           callEvents = function(eventArr) {
-            var _j, _len1;
+            var event, _j, _k, _len1, _len2;
             if (eventArr != null) {
               for (_j = 0, _len1 = eventArr.length; _j < _len1; _j++) {
-                e = eventArr[_j];
-                e.apply(context, args);
+                event = eventArr[_j];
+                if (typeof event === 'string') {
+                  _this.trigger(event, args);
+                } else {
+                  if (Array.isArray(event)) {
+                    for (_k = 0, _len2 = event.length; _k < _len2; _k++) {
+                      e = event[_k];
+                      _this.trigger(e, args);
+                    }
+                  } else {
+                    event.apply(context, args);
+                  }
+                }
               }
             }
             return null;
