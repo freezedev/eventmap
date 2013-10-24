@@ -81,8 +81,22 @@ If you are familiar with jQuery, you know that you ususally bind your event
 with `.on('click', function() {})` and you either trigger the event with
 `.trigger('click')` or `.click()`.
 
+By default, the eventmap has the functionality:
+```
+myEventMap.on('coolevent', function() {
+  console.log('Shorthand rocks');
+});
+```
 
+We already know we can trigger a function with `.trigger`, but the shorthand
+bindings also allow us to do this:
+
+```
+myEventMap.coolevent();
+```
+
+The shorthand function binding is pretty non-intrusive, so if a property with
+the event name does already exists, it will not overwrite it.
 
 TODO: Document repeatable and delayed events
-TODO: Shorthand functions
 TODO: Serializing and deserializing
