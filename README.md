@@ -98,5 +98,8 @@ myEventMap.coolevent();
 The shorthand function binding is pretty non-intrusive, so if a property with
 the event name does already exists, it will not overwrite it.
 
+Serializing and deserializing events
+
+It's as easy as calling `.serialize()` and `.deserialize()`.
+
 TODO: Document repeatable and delayed events
-TODO: Serializing and deserializing
