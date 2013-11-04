@@ -40,6 +40,8 @@ udefine 'eventmap', ['root'], (root) ->
       
       @options = options
 
+    @alternateNames = true
+
     serialize: ->
       try
         result = JSON.stringify @events, (key, value) ->
@@ -216,7 +218,10 @@ udefine 'eventmap', ['root'], (root) ->
         triggerEvent.call @
       
       @
-
+      
+    if @alternateNames
+      EventMap::addListener = EventMap::on
+      EventMap::emit = EventMap::trigger
 
 if udefine.env.commonjs
   udefine.require 'eventmap', (EventMap) -> module.exports = EventMap
