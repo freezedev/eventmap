@@ -32,3 +32,6 @@ describe 'EventMap', ->
     
   it 'EventMap#trigger exists', ->
     expect(EventMap.prototype.trigger).to.be.a('function')
+  
+  it 'EventMap.alternateNames exists', ->
+    expect(EventMap.alternateNames).to.be.a('boolean')
