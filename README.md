@@ -11,6 +11,8 @@ anything to the DOM.
 
 It can be used for publish-/subscribe-events.
 
+In some ways, it is similar to Node's EventEmitter or Twitter's Flight, except that EventMap works in Node.js and in the browser.
+
 How to use
 ----------
 
