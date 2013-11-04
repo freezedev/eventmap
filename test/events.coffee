@@ -1,8 +1,10 @@
 require 'udefine/global'
 EventMap = require '../dist/eventmap'
 {expect} = require 'chai'
+Chance = require 'chance'
 
 myEventMap = new EventMap()
+chance = new Chance()
 
 describe 'EventMap', ->
   it 'Register an event', (done) ->
@@ -18,25 +20,29 @@ describe 'EventMap', ->
     myEventMap.trigger 'b'
 
   it 'Calling an event with parameters', (done) ->
+    randomString = chance.word()
+    
     myEventMap.on 'c', (param) ->
       expect(param).to.be.a('string')
-      expect(param).to.equal('test')
+      expect(param).to.equal(randomString)
       done()
       
-    myEventMap.trigger 'c', 'test'
+    myEventMap.trigger 'c', randomString
 
   it 'Calling before and after events', (done) ->
+    randomNum = chance.natural()
+    
     myEventMap.on 'd', (param) ->
       expect(param).to.be.a('number')
-      expect(param).to.equal(5)
+      expect(param).to.equal(randomNum)
     
     myEventMap.before 'd', (param) ->
       expect(param).to.be.a('number')
-      expect(param).to.equal(5)
+      expect(param).to.equal(randomNum)
       
     myEventMap.after 'd', (param) ->
       expect(param).to.be.a('number')
-      expect(param).to.equal(5)
+      expect(param).to.equal(randomNum)
       done()
       
-    myEventMap.trigger 'd', 5
+    myEventMap.trigger 'd', randomNum
