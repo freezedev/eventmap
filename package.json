@@ -12,12 +12,13 @@
   },
   "devDependencies": {
     "grunt": "0.4.x",
-    "grunt-contrib-coffee": "*",
-    "grunt-contrib-uglify": "*",
-    "grunt-coffeelint": "*",
-    "grunt-mocha-test": "*",
-    "chai": "*",
-    "matchdep": "*"
+    "grunt-contrib-coffee": "~0.7.0",
+    "grunt-contrib-uglify": "~0.2.5",
+    "grunt-coffeelint": "~0.0.7",
+    "grunt-mocha-test": "~0.7.0",
+    "chai": "~1.7.2",
+    "matchdep": "~0.1.2",
+    "chance": "~0.5.1"
   },
   "scripts": {
     "test": "grunt test"
