@@ -1,5 +1,5 @@
 (function() {
-  var EventMap, expect, myEventMap;
+  var Chance, EventMap, chance, expect, myEventMap;
 
   require('udefine/global');
 
@@ -7,7 +7,11 @@
 
   expect = require('chai').expect;
 
+  Chance = require('chance');
+
   myEventMap = new EventMap();
+
+  chance = new Chance();
 
   describe('EventMap', function() {
     it('Register an event', function(done) {
@@ -24,28 +28,32 @@
       return myEventMap.trigger('b');
     });
     it('Calling an event with parameters', function(done) {
+      var randomString;
+      randomString = chance.word();
       myEventMap.on('c', function(param) {
         expect(param).to.be.a('string');
-        expect(param).to.equal('test');
+        expect(param).to.equal(randomString);
         return done();
       });
-      return myEventMap.trigger('c', 'test');
+      return myEventMap.trigger('c', randomString);
     });
     return it('Calling before and after events', function(done) {
+      var randomNum;
+      randomNum = chance.natural();
       myEventMap.on('d', function(param) {
         expect(param).to.be.a('number');
-        return expect(param).to.equal(5);
+        return expect(param).to.equal(randomNum);
       });
       myEventMap.before('d', function(param) {
         expect(param).to.be.a('number');
-        return expect(param).to.equal(5);
+        return expect(param).to.equal(randomNum);
       });
       myEventMap.after('d', function(param) {
         expect(param).to.be.a('number');
-        expect(param).to.equal(5);
+        expect(param).to.equal(randomNum);
         return done();
       });
-      return myEventMap.trigger('d', 5);
+      return myEventMap.trigger('d', randomNum);
     });
   });
 
