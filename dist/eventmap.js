@@ -64,6 +64,8 @@
         this.options = options;
       }
 
+      EventMap.alternateNames = true;
+
       EventMap.prototype.serialize = function() {
         var err, result;
         try {
@@ -294,6 +296,11 @@
         }
         return this;
       };
+
+      if (EventMap.alternateNames) {
+        EventMap.prototype.addListener = EventMap.prototype.on;
+        EventMap.prototype.emit = EventMap.prototype.trigger;
+      }
 
       return EventMap;
 

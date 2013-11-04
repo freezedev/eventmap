@@ -35,8 +35,15 @@
     it('EventMap#clear exists', function() {
       return expect(EventMap.prototype.clear).to.be.a('function');
     });
-    return it('EventMap#trigger exists', function() {
+    it('EventMap#trigger exists', function() {
       return expect(EventMap.prototype.trigger).to.be.a('function');
+    });
+    it('EventMap.alternateNames exists', function() {
+      return expect(EventMap.alternateNames).to.be.a('boolean');
+    });
+    return it('EventMap alternative method names for #trigger and #on exist', function() {
+      expect(EventMap.prototype.emit).to.be.a('function');
+      return expect(EventMap.prototype.addListener).to.be.a('function');
     });
   });
 
