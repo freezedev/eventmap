@@ -16,7 +16,7 @@
     "udefine": "~0.8.2"
   },
   "devDependencies": {
-    "mocha": "*",
+    "mocha": "~1.8.1",
     "chai": "*"
   }
 }
