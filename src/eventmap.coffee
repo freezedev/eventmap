@@ -223,5 +223,6 @@ udefine 'eventmap', ['root'], (root) ->
       EventMap::addListener = EventMap::on
       EventMap::emit = EventMap::trigger
 
+# Our current CommonJS workaround
 if udefine.env.commonjs
   udefine.require 'eventmap', (EventMap) -> module.exports = EventMap
