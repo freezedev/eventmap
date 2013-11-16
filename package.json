@@ -23,7 +23,19 @@
   "scripts": {
     "test": "grunt test"
   },
-  "readmeFilename": "README.md",
   "author": "Johannes Stein",
-  "license": "Public domain"
+  "license": "Public domain",
+  "bugs": {
+    "url": "https://github.com/freezedev/eventmap/issues"
+  },
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "keywords": [
+    "eventmap",
+    "event",
+    "eventemitter",
+    "pubsub"
+  ]
 }
