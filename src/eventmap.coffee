@@ -110,6 +110,10 @@ udefine 'eventmap', ['root'], (root) ->
 
       @
     
+    one: (eventName, eventFunction) ->
+      @on eventName, =>
+        eventFunction.apply @, arguments
+        @off eventName
     
     before: (eventName, eventFunction) ->
       return unless eventFunction
