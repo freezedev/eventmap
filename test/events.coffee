@@ -7,6 +7,14 @@ myEventMap = new EventMap()
 chance = new Chance()
 
 describe 'EventMap', ->
+  it 'Event name cannot be a *', ->
+    callEventMap = (name) ->
+      myEventMap[name] '*', ->
+    
+    expect(callEventMap('on')).to.throw(Error)
+    expect(callEventMap('after')).to.throw(Error)
+    expect(callEventMap('before')).to.throw(Error)
+  
   it 'Register an event', (done) ->
     myEventMap.on 'a', -> done()
     
