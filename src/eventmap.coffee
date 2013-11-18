@@ -226,6 +226,7 @@ udefine 'eventmap', ['root'], (root) ->
     if @alternateNames
       EventMap::addListener = EventMap::on
       EventMap::emit = EventMap::trigger
+      EventMap::once = EventMap::one
 
 # Our current CommonJS workaround
 if udefine.env.commonjs
