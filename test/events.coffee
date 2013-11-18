@@ -46,3 +46,24 @@ describe 'EventMap', ->
       done()
       
     myEventMap.trigger 'd', randomNum
+    
+  it 'Calling an event only once', (done) ->
+    randomNum = chance.natural()
+    
+    calls = 0
+    callMax = 2
+    checkCalls = ->
+      if calls is callMax then done()
+
+    
+    myEventMap.one 'e', (param) ->
+      expect(param).to.be.a('number')
+      expect(param).to.equal(randomNum)
+      calls++
+      checkCalls()
+      
+    myEventMap.trigger 'e', randomNum
+
+    expect(myEventMap.trigger('e', randomNum)).to.equal(undefined)
+    calls++
+    checkCalls()
