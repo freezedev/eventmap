@@ -26,6 +26,9 @@
     it('EventMap#off exists', function() {
       return expect(EventMap.prototype.on).to.be.a('function');
     });
+    it('EventMap#one exists', function() {
+      return expect(EventMap.prototype.one).to.be.a('function');
+    });
     it('EventMap#before exists', function() {
       return expect(EventMap.prototype.before).to.be.a('function');
     });

@@ -37,7 +37,7 @@
       });
       return myEventMap.trigger('c', randomString);
     });
-    return it('Calling before and after events', function(done) {
+    it('Calling before and after events', function(done) {
       var randomNum;
       randomNum = chance.natural();
       myEventMap.on('d', function(param) {
@@ -54,6 +54,27 @@
         return done();
       });
       return myEventMap.trigger('d', randomNum);
+    });
+    return it('Calling an event only once', function(done) {
+      var callMax, calls, checkCalls, randomNum;
+      randomNum = chance.natural();
+      calls = 0;
+      callMax = 2;
+      checkCalls = function() {
+        if (calls === callMax) {
+          return done();
+        }
+      };
+      myEventMap.one('e', function(param) {
+        expect(param).to.be.a('number');
+        expect(param).to.equal(randomNum);
+        calls++;
+        return checkCalls();
+      });
+      myEventMap.trigger('e', randomNum);
+      expect(myEventMap.trigger('e', randomNum)).to.equal(void 0);
+      calls++;
+      return checkCalls();
     });
   });
 

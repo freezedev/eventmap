@@ -169,6 +169,14 @@
         return this;
       };
 
+      EventMap.prototype.one = function(eventName, eventFunction) {
+        var _this = this;
+        return this.on(eventName, function() {
+          eventFunction.apply(_this, arguments);
+          return _this.off(eventName);
+        });
+      };
+
       EventMap.prototype.before = function(eventName, eventFunction) {
         var _base, _base1;
         if (!eventFunction) {
@@ -300,6 +308,7 @@
       if (EventMap.alternateNames) {
         EventMap.prototype.addListener = EventMap.prototype.on;
         EventMap.prototype.emit = EventMap.prototype.trigger;
+        EventMap.prototype.once = EventMap.prototype.one;
       }
 
       return EventMap;
