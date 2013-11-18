@@ -152,9 +152,18 @@ udefine 'eventmap', ['root'], (root) ->
       
       @
     
+    all: ->
+      @trigger '*'
+      
+      @
+    
     trigger: (eventName, args...) ->
       # Break if eventName parameter has been omitted
       return unless eventName?
+      
+      if eventName is '*'
+        @trigger e, args for e in Object.keys @events
+        return
       
       # Call multiple events
       @trigger e, args for e in eventName if Array.isArray eventName
