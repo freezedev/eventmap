@@ -73,7 +73,7 @@ udefine 'eventmap', ['root'], (root) ->
       eventName = [eventName] unless Array.isArray eventName
       
       bindSingleEvent = (evName) =>
-        unless hasProp.call context, evName
+        unless context[evName]
           context[evName] = (args...) ->
             @trigger.apply @, flatten([evName, args])
             
@@ -93,10 +93,8 @@ udefine 'eventmap', ['root'], (root) ->
         id: -1
         type: ''
       
-      @events[eventName]['now'] or= []
+      (@events[eventName]['now'] or= []).push eventFunction
 
-      @events[eventName]['now'].push eventFunction
-      
       @bind eventName
       
       @
@@ -127,9 +125,7 @@ udefine 'eventmap', ['root'], (root) ->
       
       @events[eventName] or= {}
       
-      @events[eventName]['before'] or= []
-      
-      @events[eventName]['before'].push eventFunction
+      (@events[eventName]['before'] or= []).push eventFunction
       
       @
       
@@ -140,9 +136,7 @@ udefine 'eventmap', ['root'], (root) ->
       
       @events[eventName] or= {}
       
-      @events[eventName]['after'] or= []
-      
-      @events[eventName]['after'].push eventFunction
+      (@events[eventName]['after'] or= []).push eventFunction
       
       @
     
