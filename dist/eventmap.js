@@ -14,7 +14,7 @@
 
 (function() {
   'use strict';
-  var defaults, flatten, hasProp,
+  var checkEventName, defaults, flatten, hasProp,
     __slice = [].slice;
 
   (function() {
@@ -42,6 +42,12 @@
       }
     }
     return opts;
+  };
+
+  checkEventName = function(name) {
+    if (name === '*') {
+      throw new Error('* is not allowed as an event name');
+    }
   };
 
   flatten = function(arr) {
@@ -113,7 +119,7 @@
           eventName = [eventName];
         }
         bindSingleEvent = function(evName) {
-          if (!hasProp.call(context, evName)) {
+          if (!context[evName]) {
             return context[evName] = function() {
               var args;
               args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -133,6 +139,7 @@
         if (!eventFunction) {
           return;
         }
+        checkEventName(eventName);
         if (this.validEvents.length > 0) {
           if (this.validEvents.indexOf(eventName) === -1) {
             return;
@@ -142,8 +149,7 @@
           id: -1,
           type: ''
         });
-        (_base1 = this.events[eventName])['now'] || (_base1['now'] = []);
-        this.events[eventName]['now'].push(eventFunction);
+        ((_base1 = this.events[eventName])['now'] || (_base1['now'] = [])).push(eventFunction);
         this.bind(eventName);
         return this;
       };
@@ -182,9 +188,9 @@
         if (!eventFunction) {
           return;
         }
+        checkEventName(eventName);
         (_base = this.events)[eventName] || (_base[eventName] = {});
-        (_base1 = this.events[eventName])['before'] || (_base1['before'] = []);
-        this.events[eventName]['before'].push(eventFunction);
+        ((_base1 = this.events[eventName])['before'] || (_base1['before'] = [])).push(eventFunction);
         return this;
       };
 
@@ -193,9 +199,9 @@
         if (!eventFunction) {
           return;
         }
+        checkEventName(eventName);
         (_base = this.events)[eventName] || (_base[eventName] = {});
-        (_base1 = this.events[eventName])['after'] || (_base1['after'] = []);
-        this.events[eventName]['after'].push(eventFunction);
+        ((_base1 = this.events[eventName])['after'] || (_base1['after'] = [])).push(eventFunction);
         return this;
       };
 
@@ -205,16 +211,29 @@
         return this;
       };
 
+      EventMap.prototype.all = function() {
+        this.trigger('*');
+        return this;
+      };
+
       EventMap.prototype.trigger = function() {
-        var args, context, delay, e, ev, eventName, interval, name, repeat, sender, timeoutId, triggerEvent, triggerFunction, _i, _len, _ref,
+        var args, context, delay, e, ev, eventName, interval, name, repeat, sender, timeoutId, triggerEvent, triggerFunction, _i, _j, _len, _len1, _ref, _ref1,
           _this = this;
         eventName = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
         if (eventName == null) {
           return;
         }
+        if (eventName === '*') {
+          _ref = Object.keys(this.events);
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            e = _ref[_i];
+            this.trigger(e, args);
+          }
+          return;
+        }
         if (Array.isArray(eventName)) {
-          for (_i = 0, _len = eventName.length; _i < _len; _i++) {
-            e = eventName[_i];
+          for (_j = 0, _len1 = eventName.length; _j < _len1; _j++) {
+            e = eventName[_j];
             this.trigger(e, args);
           }
         }
@@ -223,7 +242,7 @@
         } else {
           name = eventName;
         }
-        if (((_ref = this.events[name]) != null ? _ref['now'] : void 0) == null) {
+        if (((_ref1 = this.events[name]) != null ? _ref1['now'] : void 0) == null) {
           return;
         }
         if (interval == null) {
@@ -250,16 +269,16 @@
           beforeArr = _this.events[name]['before'] || [];
           afterArr = _this.events[name]['after'] || [];
           callEvents = function(eventArr) {
-            var event, _j, _k, _len1, _len2;
+            var event, _k, _l, _len2, _len3;
             if (eventArr != null) {
-              for (_j = 0, _len1 = eventArr.length; _j < _len1; _j++) {
-                event = eventArr[_j];
+              for (_k = 0, _len2 = eventArr.length; _k < _len2; _k++) {
+                event = eventArr[_k];
                 if (typeof event === 'string') {
                   _this.trigger(event, args);
                 } else {
                   if (Array.isArray(event)) {
-                    for (_k = 0, _len2 = event.length; _k < _len2; _k++) {
-                      e = event[_k];
+                    for (_l = 0, _len3 = event.length; _l < _len3; _l++) {
+                      e = event[_l];
                       _this.trigger(e, args);
                     }
                   } else {

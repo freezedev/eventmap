@@ -14,6 +14,24 @@
   chance = new Chance();
 
   describe('EventMap', function() {
+    beforeEach(function() {
+      return myEventMap.clear();
+    });
+    it('Event name cannot be a *', function() {
+      var callEventMap;
+      callEventMap = function(name) {
+        return myEventMap[name]('*', function() {});
+      };
+      expect(function() {
+        return callEventMap('on');
+      }).to["throw"](Error);
+      expect(function() {
+        return callEventMap('after');
+      }).to["throw"](Error);
+      return expect(function() {
+        return callEventMap('before');
+      }).to["throw"](Error);
+    });
     it('Register an event', function(done) {
       myEventMap.on('a', function() {
         return done();

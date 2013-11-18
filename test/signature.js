@@ -46,7 +46,8 @@
     });
     return it('EventMap alternative method names for #trigger and #on exist', function() {
       expect(EventMap.prototype.emit).to.be.a('function');
-      return expect(EventMap.prototype.addListener).to.be.a('function');
+      expect(EventMap.prototype.addListener).to.be.a('function');
+      return expect(EventMap.prototype.once).to.be.a('function');
     });
   });
 
