@@ -20,6 +20,9 @@ defaults = (opts, defOpts) ->
         opts[key] = value
       
   opts
+  
+checkEventName = (name) ->
+  if name is '*' then throw new Error '* is not allowed as an event name'
 
 # Flattens an array
 flatten = (arr) -> [].concat.call [], arr
@@ -80,6 +83,8 @@ udefine 'eventmap', ['root'], (root) ->
 
     on: (eventName, eventFunction) ->
       return unless eventFunction
+      
+      checkEventName eventName
 
       if @validEvents.length > 0
         return if @validEvents.indexOf(eventName) is -1
@@ -118,6 +123,8 @@ udefine 'eventmap', ['root'], (root) ->
     before: (eventName, eventFunction) ->
       return unless eventFunction
       
+      checkEventName eventName
+      
       @events[eventName] or= {}
       
       @events[eventName]['before'] or= []
@@ -128,6 +135,8 @@ udefine 'eventmap', ['root'], (root) ->
       
     after: (eventName, eventFunction) ->
       return unless eventFunction
+      
+      checkEventName eventName
       
       @events[eventName] or= {}
       
