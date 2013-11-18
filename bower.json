@@ -9,6 +9,7 @@
     "test",
     "tests",
     "udefine",
+    "examples",
     "src",
     "gruntfile.coffee"
   ],
