@@ -20,6 +20,9 @@ describe 'EventMap', ->
 
   it 'EventMap#off exists', ->
     expect(EventMap::on).to.be.a('function')
+    
+  it 'EventMap#one exists', ->
+    expect(EventMap::one).to.be.a('function')
 
   it 'EventMap#before exists', ->
     expect(EventMap::before).to.be.a('function')
