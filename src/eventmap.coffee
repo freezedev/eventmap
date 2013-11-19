@@ -237,6 +237,7 @@ udefine 'eventmap', ['root'], (root) ->
       
     if @alternateNames
       EventMap::addListener = EventMap::on
+      EventMap::removeListener = EventMap::off
       EventMap::emit = EventMap::trigger
       EventMap::once = EventMap::one
 
