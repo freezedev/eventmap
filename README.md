@@ -13,6 +13,19 @@ It can be used for publish-/subscribe-events.
 
 In some ways, it is similar to Node's EventEmitter or Twitter's Flight, except that EventMap works in Node.js and in the browser.
 
+Installation
+------------
+
+If you are using Node.js: `npm install eventmap`  
+If you are using Bower: `bower install eventmap`  
+(If you also want to save the configuration in your `package.json` or `bower.json` add `--save` to the command.)
+
+Don't use npm or bower? Just grab `eventmap.js` from the `dist` folder and embed it in your application.
+
+Usage in Node.js:  
+EventMap uses udefine as its UMD wrapper, so you need to a
+`require('udefine/global')` before requiring the eventmap module.
+
 How to use
 ----------
 
@@ -101,7 +114,19 @@ The shorthand function binding is pretty non-intrusive, so if a property with
 the event name does already exists, it will not overwrite it.
 
 Serializing and deserializing events
+------------------------------------
 
 It's as easy as calling `.serialize()` and `.deserialize()`.
+The eventmap serializes into an object where the functions are strings and are being evaluated when deserializing.
 
 TODO: Document repeatable and delayed events
+
+
+Alternative API
+---------------
+
+If you prefer the Node.js Event Emitter API instead of the jQuery one, you can actually use these API calls:  
+`EventMap.prototype.on` -> `EventMap.prototype.addListener`  
+`EventMap.prototype.off` -> `EventMap.prototype.removeListener`  
+`EventMap.prototype.trigger` -> `EventMap.prototype.emit`  
+`EventMap.prototype.one` -> `EventMap.prototype.once`  
