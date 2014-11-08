@@ -242,8 +242,7 @@ factory = ->
       
       instance.events = eventmap.events
       
-      
-      Object.getPrototypeOf(eventmap).forEach (methodName) ->
+      Object.keys(Object.getPrototypeOf(eventmap)).forEach (methodName) ->
         unless Type
           instance[methodName] = EventMap::[methodName].bind(instance)
         else
