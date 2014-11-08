@@ -1,53 +1,53 @@
 'use strict'
 
-# ES5 shims
-do -> Array.isArray ?= (a) -> a.push is Array.prototype.push and a.length?
+root = window
 
-# hasOwnProperty shorthand
-hasProp = {}.hasOwnProperty
-
-# Default options, similar to _.defaults, but without the edge cases
-# of $.extend
-defaults = (opts, defOpts) ->
-  opts = {} unless opts?
-    
-  for key, value of defOpts
-    unless hasProp.call opts, key
-      if typeof value is 'object'
-        opts[key] = {}
-        defaults opts[key], value
-      else
-        opts[key] = value
+factory = ->
+  # ES5 shims
+  do -> Array.isArray ?= (a) -> a.push is Array.prototype.push and a.length?
+  
+  # hasOwnProperty shorthand
+  hasProp = {}.hasOwnProperty
+  
+  # Default options, similar to _.defaults, but without the edge cases
+  # of $.extend
+  defaults = (opts, defOpts) ->
+    opts = {} unless opts?
       
-  opts
+    for key, value of defOpts
+      unless hasProp.call opts, key
+        if typeof value is 'object'
+          opts[key] = {}
+          defaults opts[key], value
+        else
+          opts[key] = value
+        
+    opts
+    
+  checkEventName = (name) ->
+    if name is '*' then throw new Error '* is not allowed as an event name'
   
-checkEventName = (name) ->
-  if name is '*' then throw new Error '* is not allowed as an event name'
+  # Flattens an array
+  flatten = (arr) -> [].concat.call [], arr
 
-# Flattens an array
-flatten = (arr) -> [].concat.call [], arr
-
-udefine 'eventmap', ['root'], (root) ->
-  
   class EventMap
-   
     constructor: (options) ->
       options = defaults options,
         shorthandFunctions:
           enabled: true
           separator: '/'
       
-      @sender = null
-      @events = {}
-      @validEvents = []
-      
-      @options = options
+      @events
+        listeners: {}
+        sender: null
+        valid: []
+        options: options
 
     @alternateNames = true
 
     serialize: ->
       try
-        result = JSON.stringify @events, (key, value) ->
+        result = JSON.stringify @events.listeners, (key, value) ->
           value = value.toString() if typeof value is 'function'
           value
       catch err
@@ -64,11 +64,11 @@ udefine 'eventmap', ['root'], (root) ->
         console.error "Error while deserializing eventmap: #{err}"
         return false
         
-      @events = events
+      @events.listeners = events
       true
 
     bind: (eventName, context = @) ->
-      return unless @options.shorthandFunctions.enabled
+      return unless @events.options.shorthandFunctions.enabled
       
       eventName = [eventName] unless Array.isArray eventName
       
@@ -86,28 +86,28 @@ udefine 'eventmap', ['root'], (root) ->
       
       checkEventName eventName
 
-      if @validEvents.length > 0
-        return if @validEvents.indexOf(eventName) is -1
+      if @events.valid.length > 0
+        return if @events.valid.indexOf(eventName) is -1
       
-      @events[eventName] or=
+      @events.listeners[eventName] or=
         id: -1
         type: ''
       
-      (@events[eventName]['now'] or= []).push eventFunction
+      (@events.listeners[eventName]['now'] or= []).push eventFunction
 
       @bind eventName
       
       @
       
     off: (eventName) ->
-      if eventName and @events[eventName]
-        {id, type} = @events[eventName]
+      if eventName and @events.listeners[eventName]
+        {id, type} = @events.listeners[eventName]
   
         if type is 'once' or type is 'repeat'
           root.clearInterval id if type is 'repeat'
           root.clearTimeout id if type is 'once'
   
-        delete @events[eventName] if @events[eventName]
+        delete @events.listeners[eventName] if @events.listeners[eventName]
       else
         return
 
@@ -123,9 +123,9 @@ udefine 'eventmap', ['root'], (root) ->
       
       checkEventName eventName
       
-      @events[eventName] or= {}
+      @events.listeners[eventName] or= {}
       
-      (@events[eventName]['before'] or= []).push eventFunction
+      (@events.listeners[eventName]['before'] or= []).push eventFunction
       
       @
       
@@ -134,15 +134,16 @@ udefine 'eventmap', ['root'], (root) ->
       
       checkEventName eventName
       
-      @events[eventName] or= {}
+      @events.listeners[eventName] or= {}
       
-      (@events[eventName]['after'] or= []).push eventFunction
+      (@events.listeners[eventName]['after'] or= []).push eventFunction
       
       @
     
     clear: ->
-      @events = {}
-      @validEvents = []
+      @events =
+        listeners: {}
+        valid = []
       
       @
     
@@ -156,7 +157,7 @@ udefine 'eventmap', ['root'], (root) ->
       return unless eventName?
       
       if eventName is '*'
-        @trigger e, args for e in Object.keys @events
+        @trigger e, args for e in Object.keys @events.listeners
         return
       
       # Call multiple events
@@ -170,22 +171,22 @@ udefine 'eventmap', ['root'], (root) ->
 
       # Break if event doesn't exist
       # Also break if there are events defined in "now"
-      return unless @events[name]?['now']?
+      return unless @events.listeners[name]?['now']?
 
       # Set default values
       interval = 0 unless interval?
       repeat = false unless repeat?
       context = {} unless context?
       delay = 0 unless delay?
-      sender = @sender unless sender?
+      sender = @events.sender unless sender?
       
       context.sender = sender unless sender?
       
       # TODO: Add support for asynchronous functions
       triggerFunction = =>
-        nowArr = @events[name]['now'] || []
-        beforeArr = @events[name]['before'] || []
-        afterArr = @events[name]['after'] || []
+        nowArr = @events.listeners[name]['now'] || []
+        beforeArr = @events.listeners[name]['before'] || []
+        afterArr = @events.listeners[name]['after'] || []
         
         callEvents = (eventArr) =>
           if eventArr?
@@ -210,7 +211,7 @@ udefine 'eventmap', ['root'], (root) ->
         callEvents afterArr
       
       # Call event
-      ev = @events[name]
+      ev = @events.listeners[name]
       
       triggerEvent = ->
         if interval
@@ -234,6 +235,16 @@ udefine 'eventmap', ['root'], (root) ->
         triggerEvent.call @
       
       @
+    
+    @mixin: (instance, Type) ->
+      eventmap = new EventMap()
+      
+      instance.events = eventmap.events
+      
+      Object.getPrototypeOf(eventmap).forEach (methodName) ->
+        Type::[methodName] = EventMap::[methodName]
+      
+      @
       
     if @alternateNames
       EventMap::addListener = EventMap::on
@@ -241,6 +252,16 @@ udefine 'eventmap', ['root'], (root) ->
       EventMap::emit = EventMap::trigger
       EventMap::once = EventMap::one
 
-# Our current CommonJS workaround
-if udefine.env.commonjs
-  udefine.require 'eventmap', (EventMap) -> module.exports = EventMap
+# Improve interop with ES6 transpilers
+EventMap['default'] = EventMap
+  
+if typeof define === 'function' and define.amd
+  # AMD
+  define 'eventmap', [], factory
+else
+  if typeof exports != null
+    # CommonJS
+    module.exports = factory();
+  else
+    # Globals
+    window.EventHopper = factory();
