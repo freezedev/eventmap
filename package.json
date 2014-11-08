@@ -8,14 +8,15 @@
     "url": "http://github.com/freezedev/eventmap.git"
   },
   "devDependencies": {
-    "grunt": "0.4.x",
+    "chai": "~1.8.1",
+    "chance": "~0.5.1",
+    "grunt": "~0.4.0",
+    "grunt-coffeelint": "~0.0.7",
     "grunt-contrib-coffee": "~0.7.0",
     "grunt-contrib-uglify": "~0.2.5",
-    "grunt-coffeelint": "~0.0.7",
     "grunt-mocha-test": "~0.7.0",
-    "chai": "~1.8.1",
-    "matchdep": "~0.3.0",
-    "chance": "~0.5.1"
+    "load-grunt-config": "^0.16.0",
+    "time-grunt": "^1.0.0"
   },
   "scripts": {
     "test": "grunt test"
