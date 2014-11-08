@@ -253,8 +253,12 @@ factory = ->
       EventMap::emit = EventMap::trigger
       EventMap::once = EventMap::one
 
-# Improve interop with ES6 transpilers
-EventMap['default'] = EventMap
+  # Improve interop with ES6 transpilers
+  EventMap['default'] = EventMap
+  
+  # Return reference
+  EventMap
+  
   
 if typeof define is 'function' and define.amd
   # AMD
