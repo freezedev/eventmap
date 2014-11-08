@@ -242,9 +242,13 @@ factory = ->
       
       instance.events = eventmap.events
       
-      Object.getPrototypeOf(eventmap).forEach (methodName) ->
-        Type::[methodName] = EventMap::[methodName]
       
+      Object.getPrototypeOf(eventmap).forEach (methodName) ->
+        unless Type
+          instance[methodName] = EventMap::[methodName].bind(instance)
+        else
+          Type::[methodName] = EventMap::[methodName]
+        
       @
       
     if @alternateNames
