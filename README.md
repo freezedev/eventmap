@@ -29,38 +29,38 @@ EventMap uses udefine as its UMD wrapper, so you need to a
 How to use
 ----------
 
-Create an event map instance
+__Create an event map instance__  
 ```javascript
 var myEventMap = new EventMap();
 ```
 
-Register an event
+__Register an event__  
 ```javascript
 myEventMap.on('myevent', function() {
   console.log('My first event');
 });
 ```
 
-Trigger an event
+__Trigger an event__  
 ```javascript
 myEventMap.trigger('myevent');
 // You will now see 'My first event' in the console
 ```
 
-Register another event
+__Register another event__  
 ```javascript
 myEventMap.on('myevent', function() {
   console.log('My second event');
 });
 ```
 
-Triggering the same event again
+__Triggering the same event again__  
 ```javascript
 myEventMap.trigger('myevent');
 // You will now see 'My first event' and 'My second event' in the console
 ```
 
-Passing arguments to an event
+__Passing arguments to an event__  
 ```javascript
 myEventMap.on('myevent', function(eventNumber) {
   console.log('My ' + eventNumber + ' event');
@@ -75,8 +75,7 @@ You can pass an unlimited amount of arguments to the function.
 Advanced usage
 --------------
 
-Using the sender
-
+__Using the sender__  
 Every event can be triggered with a sender parameter, which is then the first
 parameter in the event.
 ```javascript
@@ -90,8 +89,7 @@ myEventMap.trigger({name: 'fromwhere', sender: 'outerSpace'});
 The sender can be anything, be it a string, number, function, object etc.
 
 
-Shorthand functions
-
+__Shorthand functions__  
 If you are familiar with jQuery, you know that you ususally bind your event
 with `.on('click', function() {})` and you either trigger the event with
 `.trigger('click')` or `.click()`.
