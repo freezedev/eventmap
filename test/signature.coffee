@@ -46,3 +46,15 @@ describe 'EventMap', ->
     expect(EventMap::addListener).to.be.a('function')
     expect(EventMap::removeListener).to.be.a('function')
     expect(EventMap::once).to.be.a('function')
+    
+  it 'EventMap instance has all properties', ->
+    e = new EventMap()
+    
+    expect(e.events).to.be.a('object')
+    expect(e.events.listeners).to.be.a('object')
+    expect(e.events.valid).to.be.a('array')
+    expect(e.events.sender).to.exist
+    expect(e.events.options).to.be.a('object')
+    expect(e.events.options.shorthandFunctions).to.be.a('object')
+    expect(e.events.options.shorthandFunctions.enabled).to.be.a('boolean')
+    expect(e.events.options.shorthandFunctions.separator).to.be.a('string')
