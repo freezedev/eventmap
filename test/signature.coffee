@@ -18,7 +18,7 @@ describe 'EventMap', ->
     expect(EventMap::on).to.be.a('function')
 
   it 'EventMap#off exists', ->
-    expect(EventMap::on).to.be.a('function')
+    expect(EventMap::off).to.be.a('function')
     
   it 'EventMap#one exists', ->
     expect(EventMap::one).to.be.a('function')
@@ -53,7 +53,7 @@ describe 'EventMap', ->
     expect(e.events).to.be.a('object')
     expect(e.events.listeners).to.be.a('object')
     expect(e.events.valid).to.be.a('array')
-    expect(e.events.sender).to.exist
+    expect(e.events.sender).to.not.exist
     expect(e.events.options).to.be.a('object')
     expect(e.events.options.shorthandFunctions).to.be.a('object')
     expect(e.events.options.shorthandFunctions.enabled).to.be.a('boolean')
