@@ -1,8 +1,6 @@
 (function() {
   var EventMap, expect;
 
-  require('udefine/global');
-
   EventMap = require('../dist/eventmap');
 
   expect = require('chai').expect;

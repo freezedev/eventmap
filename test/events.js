@@ -1,8 +1,6 @@
 (function() {
   var Chance, EventMap, chance, expect, myEventMap;
 
-  require('udefine/global');
-
   EventMap = require('../dist/eventmap');
 
   expect = require('chai').expect;
