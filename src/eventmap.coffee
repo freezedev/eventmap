@@ -1,7 +1,9 @@
 'use strict'
 
-root = window
+# Global reference
+root = @
 
+# Factory definition
 factory = ->
   # ES5 shims
   do -> Array.isArray ?= (a) -> a.push is Array.prototype.push and a.length?
