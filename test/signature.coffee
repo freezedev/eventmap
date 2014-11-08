@@ -38,7 +38,11 @@ describe 'EventMap', ->
   it 'EventMap.alternateNames exists', ->
     expect(EventMap.alternateNames).to.be.a('boolean')
     
+  it 'EventMap.mixin exists', ->
+    expect(EventMap.mixin).to.be.a('function')
+    
   it 'EventMap alternative method names for #trigger and #on exist', ->
     expect(EventMap::emit).to.be.a('function')
     expect(EventMap::addListener).to.be.a('function')
+    expect(EventMap::removeListener).to.be.a('function')
     expect(EventMap::once).to.be.a('function')
