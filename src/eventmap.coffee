@@ -37,7 +37,7 @@ factory = ->
           enabled: true
           separator: '/'
       
-      @events
+      @events =
         listeners: {}
         sender: null
         valid: []
@@ -72,7 +72,7 @@ factory = ->
       
       eventName = [eventName] unless Array.isArray eventName
       
-      bindSingleEvent = (evName) =>
+      bindSingleEvent = (evName) ->
         unless context[evName]
           context[evName] = (args...) ->
             @trigger.apply @, flatten([evName, args])
@@ -141,9 +141,8 @@ factory = ->
       @
     
     clear: ->
-      @events =
-        listeners: {}
-        valid = []
+      @events.listeners = {}
+      @events.valid = []
       
       @
     
@@ -255,13 +254,13 @@ factory = ->
 # Improve interop with ES6 transpilers
 EventMap['default'] = EventMap
   
-if typeof define === 'function' and define.amd
+if typeof define is 'function' and define.amd
   # AMD
   define 'eventmap', [], factory
 else
   if typeof exports != null
     # CommonJS
-    module.exports = factory();
+    module.exports = factory()
   else
     # Globals
-    window.EventHopper = factory();
+    window.EventHopper = factory()
