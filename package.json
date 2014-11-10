@@ -20,6 +20,8 @@
     "time-grunt": "^1.0.0"
   },
   "scripts": {
+    "grunt": "grunt",
+    "bower": "bower",
     "test": "grunt test"
   },
   "author": "Johannes Stein",
