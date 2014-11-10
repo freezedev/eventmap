@@ -272,4 +272,4 @@ else
     module.exports = factory()
   else
     # Globals
-    window.EventHopper = factory()
+    window.EventMap = factory()
