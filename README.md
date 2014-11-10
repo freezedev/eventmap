@@ -23,8 +23,12 @@ If you are using Bower: `bower install eventmap`
 Don't use npm or bower? Just grab `eventmap.js` from the `dist` folder and embed it in your application.
 
 Usage in Node.js:  
-EventMap uses udefine as its UMD wrapper, so you need to a
-`require('udefine/global')` before requiring the eventmap module.
+Use `var EventMap = require('eventmap');` to get started.
+
+Philosophy
+----------
+* jQuery-like interface
+* Dynamic
 
 How to use
 ----------

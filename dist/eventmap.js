@@ -7,6 +7,21 @@
 
   factory = function() {
     var EventMap, checkEventName, defaults, flatten, hasProp;
+    if (Object.getPrototypeOf == null) {
+      Object.getPrototypeOf = function(object) {
+        var proto;
+        proto = object.__proto__;
+        if (proto || proto === null) {
+          return proto;
+        } else {
+          if (object.constructor) {
+            return object.constructor;
+          } else {
+            return Object.prototype;
+          }
+        }
+      };
+    }
     (function() {
       return Array.isArray != null ? Array.isArray : Array.isArray = function(a) {
         return a.push === Array.prototype.push && (a.length != null);
@@ -21,7 +36,7 @@
       for (key in defOpts) {
         value = defOpts[key];
         if (!hasProp.call(opts, key)) {
-          if (typeof value === 'object') {
+          if (typeof value === 'object' && value !== null) {
             opts[key] = {};
             defaults(opts[key], value);
           } else {
@@ -42,6 +57,7 @@
     EventMap = (function() {
       function EventMap(options) {
         options = defaults(options, {
+          sender: null,
           shorthandFunctions: {
             enabled: true,
             separator: '/'
@@ -49,9 +65,14 @@
         });
         this.events = {
           listeners: {},
-          sender: null,
+          sender: options.sender,
           valid: [],
-          options: options
+          options: {
+            shorthandFunctions: {
+              enabled: options.shorthandFunctions.enabled,
+              separator: options.shorthandFunctions.separator
+            }
+          }
         };
       }
 
@@ -344,7 +365,7 @@
     if (typeof exports !== null) {
       module.exports = factory();
     } else {
-      window.EventHopper = factory();
+      window.EventMap = factory();
     }
   }
 

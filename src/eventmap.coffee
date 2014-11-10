@@ -5,6 +5,17 @@ root = @
 
 # Factory definition
 factory = ->
+  # Object.getPrototypeOf shim
+  Object.getPrototypeOf ?= (object) ->
+    proto = object.__proto__
+    if proto or proto is null
+      return proto
+    else
+      if object.constructor
+        return object.constructor
+       else
+        return Object.prototype
+  
   # ES5 shims
   do -> Array.isArray ?= (a) -> a.push is Array.prototype.push and a.length?
   
@@ -18,7 +29,7 @@ factory = ->
       
     for key, value of defOpts
       unless hasProp.call opts, key
-        if typeof value is 'object'
+        if typeof value is 'object' and value isnt null
           opts[key] = {}
           defaults opts[key], value
         else
@@ -35,15 +46,19 @@ factory = ->
   class EventMap
     constructor: (options) ->
       options = defaults options,
+        sender: null,
         shorthandFunctions:
           enabled: true
           separator: '/'
       
       @events =
         listeners: {}
-        sender: null
+        sender: options.sender
         valid: []
-        options: options
+        options:
+          shorthandFunctions:
+            enabled: options.shorthandFunctions.enabled
+            separator: options.shorthandFunctions.separator
 
     @alternateNames = true
 
