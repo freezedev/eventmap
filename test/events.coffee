@@ -76,3 +76,21 @@ describe 'EventMap', ->
     expect(myEventMap.trigger('e', randomNum)).to.equal(undefined)
     calls++
     checkCalls()
+   
+  it 'Calling the shorthand function', (done) ->
+
+    myEventMap.on 'shorthand', ->
+      expect(@).to.be.a('object')
+      done()
+      
+    myEventMap.shorthand()
+    
+  it 'Calling the shorthand function (with a parameter)', (done) ->
+    randomString = chance.word()
+    
+    myEventMap.on 'shorthand', (param) ->
+      expect(param).to.be.a('string')
+      expect(param).to.equal(randomString)
+      done()
+        
+     myEventMap.shorthand randomString

@@ -71,7 +71,7 @@
       });
       return myEventMap.trigger('d', randomNum);
     });
-    return it('Calling an event only once', function(done) {
+    it('Calling an event only once', function(done) {
       var callMax, calls, checkCalls, randomNum;
       randomNum = chance.natural();
       calls = 0;
@@ -91,6 +91,23 @@
       expect(myEventMap.trigger('e', randomNum)).to.equal(void 0);
       calls++;
       return checkCalls();
+    });
+    it('Calling the shorthand function', function(done) {
+      myEventMap.on('shorthand', function() {
+        expect(this).to.be.a('object');
+        return done();
+      });
+      return myEventMap.shorthand();
+    });
+    return it('Calling the shorthand function (with a parameter)', function(done) {
+      var randomString;
+      randomString = chance.word();
+      myEventMap.on('shorthand', function(param) {
+        expect(param).to.be.a('string');
+        expect(param).to.equal(randomString);
+        return done();
+      });
+      return myEventMap.shorthand(randomString);
     });
   });
 
