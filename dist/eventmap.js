@@ -6,7 +6,7 @@
   root = this;
 
   factory = function() {
-    var EventMap, checkEventName, defaults, flatten, hasProp;
+    var EventMap, checkEventName, defaults, hasProp;
     if (Object.getPrototypeOf == null) {
       Object.getPrototypeOf = function(object) {
         var proto;
@@ -50,9 +50,6 @@
       if (name === '*') {
         throw new Error('* is not allowed as an event name');
       }
-    };
-    flatten = function(arr) {
-      return [].concat.call([], arr);
     };
     EventMap = (function() {
       function EventMap(options) {
@@ -128,7 +125,8 @@
             return context[evName] = function() {
               var args;
               args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-              return this.trigger.apply(this, flatten([evName, args]));
+              args.unshift(evName);
+              return this.trigger.apply(this, args);
             };
           }
         };
