@@ -58,6 +58,7 @@ factory = ->
             separator: options.shorthandFunctions.separator
 
     @alternateNames = true
+    @maxListeners = -1
 
     serialize: ->
       try
