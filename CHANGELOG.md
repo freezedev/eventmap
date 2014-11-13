@@ -1,3 +1,6 @@
+1.4.2
+- Update devDependencies
+
 1.4.1
 - Fixes `EventMap` being bound to `window.EventMap` when neither a AMD loader or a CommonJS environment is present
 - Add shim for `Object.getPrototypeOf`
