@@ -39,9 +39,6 @@ factory = ->
     
   checkEventName = (name) ->
     if name is '*' then throw new Error '* is not allowed as an event name'
-  
-  # Flattens an array
-  flatten = (arr) -> [].concat.call [], arr
 
   class EventMap
     constructor: (options) ->
@@ -92,7 +89,8 @@ factory = ->
       bindSingleEvent = (evName) ->
         unless context[evName]
           context[evName] = (args...) ->
-            @trigger.apply @, flatten([evName, args])
+            args.unshift(evName)
+            @trigger.apply @, args
             
       bindSingleEvent e for e in eventName
       
