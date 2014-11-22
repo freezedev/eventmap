@@ -162,6 +162,8 @@ factory = ->
       
       @
     
+    has: (eventName) -> Object.hasOwnProperty @events[listeners], eventName
+    
     all: ->
       @trigger '*'
       
