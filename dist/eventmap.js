@@ -6,7 +6,7 @@
   root = this;
 
   factory = function() {
-    var EventMap, checkEventName, defaults, hasProp;
+    var EventMap, addEventListener, checkEventName, defaults, hasProp;
     if (Object.getPrototypeOf == null) {
       Object.getPrototypeOf = function(object) {
         var proto;
@@ -51,6 +51,12 @@
         throw new Error('* is not allowed as an event name');
       }
     };
+    addEventListener = function(property, eventName, eventFunction) {
+      var _base, _base1;
+      checkEventName(eventName);
+      (_base = this.events.listeners)[eventName] || (_base[eventName] = {});
+      return ((_base1 = this.events.listeners[eventName])[property] || (_base1[property] = [])).push(eventFunction);
+    };
     EventMap = (function() {
       function EventMap(options) {
         options = defaults(options, {
@@ -74,6 +80,8 @@
       }
 
       EventMap.alternateNames = true;
+
+      EventMap.maxListeners = -1;
 
       EventMap.prototype.serialize = function() {
         var err, result;
@@ -138,11 +146,10 @@
       };
 
       EventMap.prototype.on = function(eventName, eventFunction) {
-        var _base, _base1;
+        var errMsg, maxListeners, _base, _base1, _base2;
         if (!eventFunction) {
           return;
         }
-        checkEventName(eventName);
         if (this.events.valid.length > 0) {
           if (this.events.valid.indexOf(eventName) === -1) {
             return;
@@ -152,7 +159,15 @@
           id: -1,
           type: ''
         });
-        ((_base1 = this.events.listeners[eventName])['now'] || (_base1['now'] = [])).push(eventFunction);
+        maxListeners = EventMap.maxListeners;
+        if (maxListeners > 0) {
+          errMsg = "Event " + eventName + " already has " + maxListeners + " events";
+          if (maxListeners === ((_base1 = this.events.listeners[eventName])['now'] || (_base1['now'] = [])).length) {
+            throw new Error(errMsg);
+          }
+        }
+        checkEventName(eventName);
+        ((_base2 = this.events.listeners[eventName])['now'] || (_base2['now'] = [])).push(eventFunction);
         this.bind(eventName);
         return this;
       };
@@ -188,24 +203,18 @@
       };
 
       EventMap.prototype.before = function(eventName, eventFunction) {
-        var _base, _base1;
         if (!eventFunction) {
           return;
         }
-        checkEventName(eventName);
-        (_base = this.events.listeners)[eventName] || (_base[eventName] = {});
-        ((_base1 = this.events.listeners[eventName])['before'] || (_base1['before'] = [])).push(eventFunction);
+        addEventListener.call(this, 'before', eventName, eventFunction);
         return this;
       };
 
       EventMap.prototype.after = function(eventName, eventFunction) {
-        var _base, _base1;
         if (!eventFunction) {
           return;
         }
-        checkEventName(eventName);
-        (_base = this.events.listeners)[eventName] || (_base[eventName] = {});
-        ((_base1 = this.events.listeners[eventName])['after'] || (_base1['after'] = [])).push(eventFunction);
+        addEventListener.call(this, 'after', eventName, eventFunction);
         return this;
       };
 
@@ -353,7 +362,7 @@
       return EventMap;
 
     })();
-    EventMap['default'] = EventMap;
+    EventMap.maxListeners = -1;
     return EventMap;
   };
 
