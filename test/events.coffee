@@ -94,3 +94,17 @@ describe 'EventMap', ->
       done()
         
      myEventMap.shorthand randomString
+
+  it 'Using maxListeners', ->
+    prevListeners = EventMap.maxListeners
+
+    EventMap.maxListeners = 1
+
+    fn = ->
+      myEventMap.on 'max', ->
+
+    fn()
+
+    expect(fn).to.throw Error
+
+    EventMap.maxListeners = prevListeners
