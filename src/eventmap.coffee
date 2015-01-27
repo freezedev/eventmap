@@ -107,22 +107,22 @@ factory = ->
     on: (eventName, eventFunction) ->
       return unless eventFunction
 
-      maxListeners = EventMap.maxListeners
-      if maxListeners > 0
-        errMsg = "Event #{eventName} already has #{maxListeners} events"
-
-        if maxListeners is @events.listeners[eventName]['now'].length
-          throw new Error errMsg
-
-      checkEventName eventName
-
       if @events.valid.length > 0
         return if @events.valid.indexOf(eventName) is -1
       
       @events.listeners[eventName] or=
         id: -1
         type: ''
-      
+
+      maxListeners = EventMap.maxListeners
+      if maxListeners > 0
+        errMsg = "Event #{eventName} already has #{maxListeners} events"
+
+        if maxListeners is (@events.listeners[eventName]['now'] or= []).length
+          throw new Error errMsg
+
+      checkEventName eventName
+
       (@events.listeners[eventName]['now'] or= []).push eventFunction
 
       @bind eventName
