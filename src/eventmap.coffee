@@ -40,6 +40,13 @@ factory = ->
   checkEventName = (name) ->
     if name is '*' then throw new Error '* is not allowed as an event name'
 
+  addEventListener = (property, eventName, eventFunction) ->
+    checkEventName eventName
+
+    @events.listeners[eventName] or= {}
+
+    (@events.listeners[eventName][property] or= []).push eventFunction
+
   class EventMap
     constructor: (options) ->
       options = defaults options,
@@ -99,7 +106,11 @@ factory = ->
 
     on: (eventName, eventFunction) ->
       return unless eventFunction
-      
+
+      if EventMap.maxListeners > 0
+        if EventMap.maxListeners is @events.listeners[eventName]['now'].length
+          throw new Error "Event listener #{eventName} already has #{EventMap.maxListeners} events"
+
       checkEventName eventName
 
       if @events.valid.length > 0
@@ -136,23 +147,15 @@ factory = ->
     
     before: (eventName, eventFunction) ->
       return unless eventFunction
-      
-      checkEventName eventName
-      
-      @events.listeners[eventName] or= {}
-      
-      (@events.listeners[eventName]['before'] or= []).push eventFunction
+
+      addEventListener.call @, 'before', eventName, eventFunction
       
       @
       
     after: (eventName, eventFunction) ->
       return unless eventFunction
-      
-      checkEventName eventName
-      
-      @events.listeners[eventName] or= {}
-      
-      (@events.listeners[eventName]['after'] or= []).push eventFunction
+
+      addEventListener.call @, 'after', eventName, eventFunction
       
       @
     
@@ -269,6 +272,9 @@ factory = ->
       EventMap::removeListener = EventMap::off
       EventMap::emit = EventMap::trigger
       EventMap::once = EventMap::one
+
+
+  EventMap.maxListeners = -1
 
   # Return reference
   EventMap
