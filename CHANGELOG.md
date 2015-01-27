@@ -1,5 +1,7 @@
-1.4.2
+1.5.0
+- Removed `EventMap.default` as it interferes with 6to5's interop modes
 - Update devDependencies
+- Add `EventMap.maxListeners`
 
 1.4.1
 - Fixes `EventMap` being bound to `window.EventMap` when neither a AMD loader or a CommonJS environment is present
