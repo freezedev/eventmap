@@ -35,6 +35,8 @@ __history
 ########################
 .project
 
+.idea
+
 # Node.js #
 ###########
 node_modules
