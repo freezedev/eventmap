@@ -107,9 +107,12 @@ factory = ->
     on: (eventName, eventFunction) ->
       return unless eventFunction
 
-      if EventMap.maxListeners > 0
-        if EventMap.maxListeners is @events.listeners[eventName]['now'].length
-          throw new Error "Event listener #{eventName} already has #{EventMap.maxListeners} events"
+      maxListeners = EventMap.maxListeners
+      if maxListeners > 0
+        errMsg = "Event #{eventName} already has #{maxListeners} events"
+
+        if maxListeners is @events.listeners[eventName]['now'].length
+          throw new Error errMsg
 
       checkEventName eventName
 
