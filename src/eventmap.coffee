@@ -270,9 +270,6 @@ factory = ->
       EventMap::emit = EventMap::trigger
       EventMap::once = EventMap::one
 
-  # Improve interop with ES6 transpilers
-  EventMap['default'] = EventMap
-  
   # Return reference
   EventMap
   
