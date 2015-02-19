@@ -99,7 +99,7 @@ with `.on('click', function() {})` and you either trigger the event with
 `.trigger('click')` or `.click()`.
 
 By default, the eventmap has the functionality:
-```
+```javascript
 myEventMap.on('coolevent', function() {
   console.log('Shorthand rocks');
 });
@@ -108,7 +108,7 @@ myEventMap.on('coolevent', function() {
 We already know we can trigger a function with `.trigger`, but the shorthand
 bindings also allow us to do this:
 
-```
+```javascript
 myEventMap.coolevent();
 ```
 
