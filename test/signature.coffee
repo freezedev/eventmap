@@ -1,6 +1,11 @@
 if exports?
+  # Server-side
   EventMap = require '../dist/eventmap'
   {expect} = require 'chai'
+else
+  # Client-side
+  {EventMap} = window
+  {expect} = window.chai
 
 describe 'EventMap', ->
   it 'EventMap is a function', ->

@@ -1,8 +1,13 @@
 if exports?
+  # Server-side
   EventMap = require '../dist/eventmap'
   {expect} = require 'chai'
   Chance = require 'chance'
-
+else
+  # Client-side
+  {EventMap, Chance} = window
+  {expect} = window.chai
+  
 myEventMap = new EventMap()
 chance = new Chance()
 
