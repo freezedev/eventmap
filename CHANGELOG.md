@@ -1,6 +1,7 @@
 1.6.0
 - Fixes a bug in the UMD module definition
 - AMD module is now anonymous
+- Add `Function::bind` shim to allow for mixing in in non-ES5 environments
 
 1.5.0
 - Removed `EventMap.default` as it interferes with 6to5's interop modes
