@@ -367,9 +367,9 @@
   };
 
   if (typeof define === 'function' && define.amd) {
-    define('eventmap', [], factory);
+    define([], factory);
   } else {
-    if (typeof exports !== null) {
+    if (typeof exports !== "undefined" && exports !== null) {
       module.exports = factory();
     } else {
       window.EventMap = factory();
