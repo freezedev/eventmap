@@ -5,6 +5,24 @@ root = @
 
 # Factory definition
 factory = ->
+  slice = Array::slice
+  
+  # Function.bind shim
+  Function::bind ?= (context) ->
+    func = this
+    args = slice.call(arguments, 1)
+    # The bound function must share the .prototype of the unbound
+    # function so that any object created by one constructor will count
+    # as an instance of both constructors.
+  
+    bound = ->
+      invokedAsConstructor = func.prototype and this instanceof func
+      ctx = !invokedAsConstructor and context or this
+      func.apply ctx, args.concat(slice.call(arguments))
+  
+    bound.prototype = func.prototype
+    bound
+  
   # Object.getPrototypeOf shim
   Object.getPrototypeOf ?= (object) ->
     proto = object.__proto__
