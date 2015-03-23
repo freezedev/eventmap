@@ -1,12 +1,28 @@
 (function() {
   'use strict';
   var factory, root,
-    __slice = [].slice;
+    slice1 = [].slice;
 
   root = this;
 
   factory = function() {
-    var EventMap, addEventListener, checkEventName, defaults, hasProp;
+    var EventMap, addEventListener, base, checkEventName, defaults, hasProp, slice;
+    slice = Array.prototype.slice;
+    if ((base = Function.prototype).bind == null) {
+      base.bind = function(context) {
+        var args, bound, func;
+        func = this;
+        args = slice.call(arguments, 1);
+        bound = function() {
+          var ctx, invokedAsConstructor;
+          invokedAsConstructor = func.prototype && this instanceof func;
+          ctx = !invokedAsConstructor && context || this;
+          return func.apply(ctx, args.concat(slice.call(arguments)));
+        };
+        bound.prototype = func.prototype;
+        return bound;
+      };
+    }
     if (Object.getPrototypeOf == null) {
       Object.getPrototypeOf = function(object) {
         var proto;
@@ -52,10 +68,10 @@
       }
     };
     addEventListener = function(property, eventName, eventFunction) {
-      var _base, _base1;
+      var base1, base2;
       checkEventName(eventName);
-      (_base = this.events.listeners)[eventName] || (_base[eventName] = {});
-      return ((_base1 = this.events.listeners[eventName])[property] || (_base1[property] = [])).push(eventFunction);
+      (base1 = this.events.listeners)[eventName] || (base1[eventName] = {});
+      return ((base2 = this.events.listeners[eventName])[property] || (base2[property] = [])).push(eventFunction);
     };
     EventMap = (function() {
       function EventMap(options) {
@@ -118,7 +134,7 @@
       };
 
       EventMap.prototype.bind = function(eventName, context) {
-        var bindSingleEvent, e, _i, _len;
+        var bindSingleEvent, e, i, len;
         if (context == null) {
           context = this;
         }
@@ -132,21 +148,21 @@
           if (!context[evName]) {
             return context[evName] = function() {
               var args;
-              args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+              args = 1 <= arguments.length ? slice1.call(arguments, 0) : [];
               args.unshift(evName);
               return this.trigger.apply(this, args);
             };
           }
         };
-        for (_i = 0, _len = eventName.length; _i < _len; _i++) {
-          e = eventName[_i];
+        for (i = 0, len = eventName.length; i < len; i++) {
+          e = eventName[i];
           bindSingleEvent(e);
         }
         return this;
       };
 
       EventMap.prototype.on = function(eventName, eventFunction) {
-        var errMsg, maxListeners, _base, _base1, _base2;
+        var base1, base2, base3, errMsg, maxListeners;
         if (!eventFunction) {
           return;
         }
@@ -155,27 +171,27 @@
             return;
           }
         }
-        (_base = this.events.listeners)[eventName] || (_base[eventName] = {
+        (base1 = this.events.listeners)[eventName] || (base1[eventName] = {
           id: -1,
           type: ''
         });
         maxListeners = EventMap.maxListeners;
         if (maxListeners > 0) {
           errMsg = "Event " + eventName + " already has " + maxListeners + " events";
-          if (maxListeners === ((_base1 = this.events.listeners[eventName])['now'] || (_base1['now'] = [])).length) {
+          if (maxListeners === ((base2 = this.events.listeners[eventName])['now'] || (base2['now'] = [])).length) {
             throw new Error(errMsg);
           }
         }
         checkEventName(eventName);
-        ((_base2 = this.events.listeners[eventName])['now'] || (_base2['now'] = [])).push(eventFunction);
+        ((base3 = this.events.listeners[eventName])['now'] || (base3['now'] = [])).push(eventFunction);
         this.bind(eventName);
         return this;
       };
 
       EventMap.prototype.off = function(eventName) {
-        var id, type, _ref;
+        var id, ref, type;
         if (eventName && this.events.listeners[eventName]) {
-          _ref = this.events.listeners[eventName], id = _ref.id, type = _ref.type;
+          ref = this.events.listeners[eventName], id = ref.id, type = ref.type;
           if (type === 'once' || type === 'repeat') {
             if (type === 'repeat') {
               root.clearInterval(id);
@@ -230,22 +246,22 @@
       };
 
       EventMap.prototype.trigger = function() {
-        var args, context, delay, e, ev, eventName, interval, name, repeat, sender, timeoutId, triggerEvent, triggerFunction, _i, _j, _len, _len1, _ref, _ref1;
-        eventName = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+        var args, context, delay, e, ev, eventName, i, interval, j, len, len1, name, ref, ref1, repeat, sender, timeoutId, triggerEvent, triggerFunction;
+        eventName = arguments[0], args = 2 <= arguments.length ? slice1.call(arguments, 1) : [];
         if (eventName == null) {
           return;
         }
         if (eventName === '*') {
-          _ref = Object.keys(this.events.listeners);
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            e = _ref[_i];
+          ref = Object.keys(this.events.listeners);
+          for (i = 0, len = ref.length; i < len; i++) {
+            e = ref[i];
             this.trigger(e, args);
           }
           return;
         }
         if (Array.isArray(eventName)) {
-          for (_j = 0, _len1 = eventName.length; _j < _len1; _j++) {
-            e = eventName[_j];
+          for (j = 0, len1 = eventName.length; j < len1; j++) {
+            e = eventName[j];
             this.trigger(e, args);
           }
         }
@@ -254,7 +270,7 @@
         } else {
           name = eventName;
         }
-        if (((_ref1 = this.events.listeners[name]) != null ? _ref1['now'] : void 0) == null) {
+        if (((ref1 = this.events.listeners[name]) != null ? ref1['now'] : void 0) == null) {
           return;
         }
         if (interval == null) {
@@ -282,16 +298,16 @@
             beforeArr = _this.events.listeners[name]['before'] || [];
             afterArr = _this.events.listeners[name]['after'] || [];
             callEvents = function(eventArr) {
-              var event, _k, _l, _len2, _len3;
+              var event, k, l, len2, len3;
               if (eventArr != null) {
-                for (_k = 0, _len2 = eventArr.length; _k < _len2; _k++) {
-                  event = eventArr[_k];
+                for (k = 0, len2 = eventArr.length; k < len2; k++) {
+                  event = eventArr[k];
                   if (typeof event === 'string') {
                     _this.trigger(event, args);
                   } else {
                     if (Array.isArray(event)) {
-                      for (_l = 0, _len3 = event.length; _l < _len3; _l++) {
-                        e = event[_l];
+                      for (l = 0, len3 = event.length; l < len3; l++) {
+                        e = event[l];
                         _this.trigger(e, args);
                       }
                     } else {
