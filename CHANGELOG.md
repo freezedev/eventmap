@@ -1,3 +1,7 @@
+1.6.0
+- Fixes a bug in the UMD module definition
+- AMD module is now anonymous
+
 1.5.0
 - Removed `EventMap.default` as it interferes with 6to5's interop modes
 - Update devDependencies
