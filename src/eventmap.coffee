@@ -285,9 +285,9 @@ factory = ->
   
 if typeof define is 'function' and define.amd
   # AMD
-  define 'eventmap', [], factory
+  define [], factory
 else
-  if typeof exports != null
+  if exports?
     # CommonJS
     module.exports = factory()
   else
