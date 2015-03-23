@@ -1,5 +1,6 @@
-EventMap = require '../dist/eventmap'
-{expect} = require 'chai'
+if exports?
+  EventMap = require '../dist/eventmap'
+  {expect} = require 'chai'
 
 describe 'EventMap', ->
   it 'EventMap is a function', ->

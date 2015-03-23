@@ -1,6 +1,7 @@
-EventMap = require '../dist/eventmap'
-{expect} = require 'chai'
-Chance = require 'chance'
+if exports?
+  EventMap = require '../dist/eventmap'
+  {expect} = require 'chai'
+  Chance = require 'chance'
 
 chance = new Chance()
 

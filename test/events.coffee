@@ -1,6 +1,7 @@
-EventMap = require '../dist/eventmap'
-{expect} = require 'chai'
-Chance = require 'chance'
+if exports?
+  EventMap = require '../dist/eventmap'
+  {expect} = require 'chai'
+  Chance = require 'chance'
 
 myEventMap = new EventMap()
 chance = new Chance()
@@ -92,7 +93,7 @@ describe 'EventMap', ->
       expect(param).to.be.a('string')
       expect(param).to.equal(randomString)
       done()
-        
+      
      myEventMap.shorthand randomString
 
   it 'Using maxListeners', ->
