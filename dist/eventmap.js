@@ -6,43 +6,8 @@
   root = this;
 
   factory = function() {
-    var EventMap, addEventListener, base, checkEventName, defaults, hasProp, slice;
+    var EventMap, addEventListener, checkEventName, defaults, hasProp, slice;
     slice = Array.prototype.slice;
-    if ((base = Function.prototype).bind == null) {
-      base.bind = function(context) {
-        var args, bound, func;
-        func = this;
-        args = slice.call(arguments, 1);
-        bound = function() {
-          var ctx, invokedAsConstructor;
-          invokedAsConstructor = func.prototype && this instanceof func;
-          ctx = !invokedAsConstructor && context || this;
-          return func.apply(ctx, args.concat(slice.call(arguments)));
-        };
-        bound.prototype = func.prototype;
-        return bound;
-      };
-    }
-    if (Object.getPrototypeOf == null) {
-      Object.getPrototypeOf = function(object) {
-        var proto;
-        proto = object.__proto__;
-        if (proto || proto === null) {
-          return proto;
-        } else {
-          if (object.constructor) {
-            return object.constructor;
-          } else {
-            return Object.prototype;
-          }
-        }
-      };
-    }
-    (function() {
-      return Array.isArray != null ? Array.isArray : Array.isArray = function(a) {
-        return a.push === Array.prototype.push && (a.length != null);
-      };
-    })();
     hasProp = {}.hasOwnProperty;
     defaults = function(opts, defOpts) {
       var key, value;
@@ -68,10 +33,10 @@
       }
     };
     addEventListener = function(property, eventName, eventFunction) {
-      var base1, base2;
+      var base, base1;
       checkEventName(eventName);
-      (base1 = this.events.listeners)[eventName] || (base1[eventName] = {});
-      return ((base2 = this.events.listeners[eventName])[property] || (base2[property] = [])).push(eventFunction);
+      (base = this.events.listeners)[eventName] || (base[eventName] = {});
+      return ((base1 = this.events.listeners[eventName])[property] || (base1[property] = [])).push(eventFunction);
     };
     EventMap = (function() {
       function EventMap(options) {
@@ -162,7 +127,7 @@
       };
 
       EventMap.prototype.on = function(eventName, eventFunction) {
-        var base1, base2, base3, errMsg, maxListeners;
+        var base, base1, base2, errMsg, maxListeners;
         if (!eventFunction) {
           return;
         }
@@ -171,19 +136,19 @@
             return;
           }
         }
-        (base1 = this.events.listeners)[eventName] || (base1[eventName] = {
+        (base = this.events.listeners)[eventName] || (base[eventName] = {
           id: -1,
           type: ''
         });
         maxListeners = EventMap.maxListeners;
         if (maxListeners > 0) {
           errMsg = "Event " + eventName + " already has " + maxListeners + " events";
-          if (maxListeners === ((base2 = this.events.listeners[eventName])['now'] || (base2['now'] = [])).length) {
+          if (maxListeners === ((base1 = this.events.listeners[eventName])['now'] || (base1['now'] = [])).length) {
             throw new Error(errMsg);
           }
         }
         checkEventName(eventName);
-        ((base3 = this.events.listeners[eventName])['now'] || (base3['now'] = [])).push(eventFunction);
+        ((base2 = this.events.listeners[eventName])['now'] || (base2['now'] = [])).push(eventFunction);
         this.bind(eventName);
         return this;
       };
