@@ -1,6 +1,6 @@
 {
   "name": "eventmap",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Provides a mechanism to register events and call them at a later point in time",
   "main": "dist/eventmap.js",
   "repository": {
