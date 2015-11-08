@@ -8,32 +8,29 @@
     "url": "http://github.com/freezedev/eventmap.git"
   },
   "devDependencies": {
+    "babel": "^6.0.15",
+    "babel-cli": "^6.1.2",
+    "babel-core": "^6.1.2",
+    "babel-loader": "^6.0.1",
+    "babel-preset-es2015": "^6.1.2",
+    "babel-preset-stage-1": "^6.1.2",
     "bower": "^1.6.5",
     "chai": "^3.4.1",
     "chance": "^0.8.0",
-    "coffeelint": "^1.13.1",
-    "grunt": "~0.4.0",
-    "grunt-cli": "~0.1.13",
-    "grunt-coffeelint": "~0.0.13",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-coffee": "^0.13.0",
-    "grunt-contrib-uglify": "^0.10.0",
-    "grunt-karma": "^0.12.1",
-    "grunt-mocha-test": "~0.12.2",
     "karma": "^0.13.15",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^0.2.1",
     "karma-mocha": "^0.2.0",
     "karma-phantomjs-launcher": "^0.2.1",
     "karma-phantomjs-shim": "^1.1.2",
-    "load-grunt-config": "^0.19.0",
     "mocha": "^2.3.3",
-    "time-grunt": "^1.0.0"
+    "webpack": "^1.12.3"
   },
   "scripts": {
-    "grunt": "grunt",
-    "bower": "bower",
-    "test": "npm run grunt test"
+    "test": "npm run grunt test",
+    "build": "babel ./src -d lib",
+    "build-umd": "webpack src dist/eventmap.js",
+    "build-umd-min": "webpack -p src dist/eventmap.min.js"
   },
   "author": "Johannes Stein",
   "license": "(Unlicense OR MIT)",
