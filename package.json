@@ -33,7 +33,7 @@
     "test": "npm run grunt test"
   },
   "author": "Johannes Stein",
-  "license": "Public domain",
+  "license": "Unlicense+MIT",
   "bugs": {
     "url": "https://github.com/freezedev/eventmap/issues"
   },
