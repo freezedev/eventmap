@@ -1,3 +1,7 @@
+2.0.0
+- ES5 shims are no longer part of the distribution
+- NPM 3.x compatibility
+
 1.6.0
 - Fixes a bug in the UMD module definition
 - AMD module is now anonymous
