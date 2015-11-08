@@ -3,7 +3,7 @@
 module.exports = function (config) {
   config.set({
     basePath: '',
-    frameworks: ['mocha', 'chai'],
+    frameworks: ['phantomjs-shim', 'mocha', 'chai'],
     files: [
       'dist/eventmap.js',
       'node_modules/chance/chance.js',
