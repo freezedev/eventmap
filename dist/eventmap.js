@@ -1,360 +1,355 @@
-(function() {
-  'use strict';
-  var factory, root,
-    slice1 = [].slice;
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["EventMap"] = factory();
+	else
+		root["EventMap"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
 
-  root = this;
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
 
-  factory = function() {
-    var EventMap, addEventListener, checkEventName, defaults, hasProp, slice;
-    slice = Array.prototype.slice;
-    hasProp = {}.hasOwnProperty;
-    defaults = function(opts, defOpts) {
-      var key, value;
-      if (opts == null) {
-        opts = {};
-      }
-      for (key in defOpts) {
-        value = defOpts[key];
-        if (!hasProp.call(opts, key)) {
-          if (typeof value === 'object' && value !== null) {
-            opts[key] = {};
-            defaults(opts[key], value);
-          } else {
-            opts[key] = value;
-          }
-        }
-      }
-      return opts;
-    };
-    checkEventName = function(name) {
-      if (name === '*') {
-        throw new Error('* is not allowed as an event name');
-      }
-    };
-    addEventListener = function(property, eventName, eventFunction) {
-      var base, base1;
-      checkEventName(eventName);
-      (base = this.events.listeners)[eventName] || (base[eventName] = {});
-      return ((base1 = this.events.listeners[eventName])[property] || (base1[property] = [])).push(eventFunction);
-    };
-    EventMap = (function() {
-      function EventMap(options) {
-        options = defaults(options, {
-          sender: null,
-          shorthandFunctions: {
-            enabled: true,
-            separator: '/'
-          }
-        });
-        this.events = {
-          listeners: {},
-          sender: options.sender,
-          valid: [],
-          options: {
-            shorthandFunctions: {
-              enabled: options.shorthandFunctions.enabled,
-              separator: options.shorthandFunctions.separator
-            }
-          }
-        };
-      }
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
 
-      EventMap.alternateNames = true;
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
 
-      EventMap.maxListeners = -1;
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 
-      EventMap.prototype.serialize = function() {
-        var err, result;
-        try {
-          result = JSON.stringify(this.events.listeners, function(key, value) {
-            if (typeof value === 'function') {
-              value = value.toString();
-            }
-            return value;
-          });
-        } catch (_error) {
-          err = _error;
-          console.error("Error while serializing eventmap: " + err);
-        }
-        return result;
-      };
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
 
-      EventMap.prototype.deserialize = function(string) {
-        var err, events;
-        try {
-          events = JSON.parse(string, function(key, value) {
-            if (value.indexOf('function') === 0) {
-              value = new Function(value)();
-            }
-            return value;
-          });
-        } catch (_error) {
-          err = _error;
-          console.error("Error while deserializing eventmap: " + err);
-          return false;
-        }
-        this.events.listeners = events;
-        return true;
-      };
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
 
-      EventMap.prototype.bind = function(eventName, context) {
-        var bindSingleEvent, e, i, len;
-        if (context == null) {
-          context = this;
-        }
-        if (!this.events.options.shorthandFunctions.enabled) {
-          return;
-        }
-        if (!Array.isArray(eventName)) {
-          eventName = [eventName];
-        }
-        bindSingleEvent = function(evName) {
-          if (!context[evName]) {
-            return context[evName] = function() {
-              var args;
-              args = 1 <= arguments.length ? slice1.call(arguments, 0) : [];
-              args.unshift(evName);
-              return this.trigger.apply(this, args);
-            };
-          }
-        };
-        for (i = 0, len = eventName.length; i < len; i++) {
-          e = eventName[i];
-          bindSingleEvent(e);
-        }
-        return this;
-      };
 
-      EventMap.prototype.on = function(eventName, eventFunction) {
-        var base, base1, base2, errMsg, maxListeners;
-        if (!eventFunction) {
-          return;
-        }
-        if (this.events.valid.length > 0) {
-          if (this.events.valid.indexOf(eventName) === -1) {
-            return;
-          }
-        }
-        (base = this.events.listeners)[eventName] || (base[eventName] = {
-          id: -1,
-          type: ''
-        });
-        maxListeners = EventMap.maxListeners;
-        if (maxListeners > 0) {
-          errMsg = "Event " + eventName + " already has " + maxListeners + " events";
-          if (maxListeners === ((base1 = this.events.listeners[eventName])['now'] || (base1['now'] = [])).length) {
-            throw new Error(errMsg);
-          }
-        }
-        checkEventName(eventName);
-        ((base2 = this.events.listeners[eventName])['now'] || (base2['now'] = [])).push(eventFunction);
-        this.bind(eventName);
-        return this;
-      };
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
 
-      EventMap.prototype.off = function(eventName) {
-        var id, ref, type;
-        if (eventName && this.events.listeners[eventName]) {
-          ref = this.events.listeners[eventName], id = ref.id, type = ref.type;
-          if (type === 'once' || type === 'repeat') {
-            if (type === 'repeat') {
-              root.clearInterval(id);
-            }
-            if (type === 'once') {
-              root.clearTimeout(id);
-            }
-          }
-          if (this.events.listeners[eventName]) {
-            delete this.events.listeners[eventName];
-          }
-        } else {
-          return;
-        }
-        return this;
-      };
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
 
-      EventMap.prototype.one = function(eventName, eventFunction) {
-        return this.on(eventName, (function(_this) {
-          return function() {
-            eventFunction.apply(_this, arguments);
-            return _this.off(eventName);
-          };
-        })(this));
-      };
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
 
-      EventMap.prototype.before = function(eventName, eventFunction) {
-        if (!eventFunction) {
-          return;
-        }
-        addEventListener.call(this, 'before', eventName, eventFunction);
-        return this;
-      };
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
 
-      EventMap.prototype.after = function(eventName, eventFunction) {
-        if (!eventFunction) {
-          return;
-        }
-        addEventListener.call(this, 'after', eventName, eventFunction);
-        return this;
-      };
+	'use strict';
 
-      EventMap.prototype.clear = function() {
-        this.events.listeners = {};
-        this.events.valid = [];
-        return this;
-      };
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
-      EventMap.prototype.all = function() {
-        this.trigger('*');
-        return this;
-      };
+	var _methods = __webpack_require__(1);
 
-      EventMap.prototype.trigger = function() {
-        var args, context, delay, e, ev, eventName, i, interval, j, len, len1, name, ref, ref1, repeat, sender, timeoutId, triggerEvent, triggerFunction;
-        eventName = arguments[0], args = 2 <= arguments.length ? slice1.call(arguments, 1) : [];
-        if (eventName == null) {
-          return;
-        }
-        if (eventName === '*') {
-          ref = Object.keys(this.events.listeners);
-          for (i = 0, len = ref.length; i < len; i++) {
-            e = ref[i];
-            this.trigger(e, args);
-          }
-          return;
-        }
-        if (Array.isArray(eventName)) {
-          for (j = 0, len1 = eventName.length; j < len1; j++) {
-            e = eventName[j];
-            this.trigger(e, args);
-          }
-        }
-        if (typeof eventName === 'object') {
-          name = eventName.name, interval = eventName.interval, repeat = eventName.repeat, context = eventName.context, delay = eventName.delay, sender = eventName.sender;
-        } else {
-          name = eventName;
-        }
-        if (((ref1 = this.events.listeners[name]) != null ? ref1['now'] : void 0) == null) {
-          return;
-        }
-        if (interval == null) {
-          interval = 0;
-        }
-        if (repeat == null) {
-          repeat = false;
-        }
-        if (context == null) {
-          context = {};
-        }
-        if (delay == null) {
-          delay = 0;
-        }
-        if (sender == null) {
-          sender = this.events.sender;
-        }
-        if (sender == null) {
-          context.sender = sender;
-        }
-        triggerFunction = (function(_this) {
-          return function() {
-            var afterArr, beforeArr, callEvents, nowArr;
-            nowArr = _this.events.listeners[name]['now'] || [];
-            beforeArr = _this.events.listeners[name]['before'] || [];
-            afterArr = _this.events.listeners[name]['after'] || [];
-            callEvents = function(eventArr) {
-              var event, k, l, len2, len3;
-              if (eventArr != null) {
-                for (k = 0, len2 = eventArr.length; k < len2; k++) {
-                  event = eventArr[k];
-                  if (typeof event === 'string') {
-                    _this.trigger(event, args);
-                  } else {
-                    if (Array.isArray(event)) {
-                      for (l = 0, len3 = event.length; l < len3; l++) {
-                        e = event[l];
-                        _this.trigger(e, args);
-                      }
-                    } else {
-                      event.apply(context, args);
-                    }
-                  }
-                }
-              }
-              return null;
-            };
-            callEvents(beforeArr);
-            callEvents(nowArr);
-            return callEvents(afterArr);
-          };
-        })(this);
-        ev = this.events.listeners[name];
-        triggerEvent = function() {
-          if (interval) {
-            if (repeat) {
-              ev.type = 'repeat';
-              ev.id = root.setInterval((function() {
-                return triggerFunction.call(this);
-              }), interval);
-            } else {
-              ev.type = 'once';
-              ev.id = root.setTimeout((function() {
-                return triggerFunction.call(this);
-              }), interval);
-            }
-          } else {
-            ev.type = 'direct';
-            triggerFunction.call(this);
-          }
-          return null;
-        };
-        if (delay) {
-          timeoutId = root.setTimeout((function() {
-            triggerEvent.call(this);
-            return root.clearTimeout(timeoutId);
-          }), delay);
-        } else {
-          triggerEvent.call(this);
-        }
-        return this;
-      };
+	var _methods2 = _interopRequireDefault(_methods);
 
-      EventMap.mixin = function(instance, Type) {
-        var eventmap;
-        eventmap = new EventMap();
-        instance.events = eventmap.events;
-        Object.keys(Object.getPrototypeOf(eventmap)).forEach(function(methodName) {
-          if (!Type) {
-            return instance[methodName] = EventMap.prototype[methodName].bind(instance);
-          } else {
-            return Type.prototype[methodName] = EventMap.prototype[methodName];
-          }
-        });
-        return this;
-      };
+	var _statics = __webpack_require__(10);
 
-      if (EventMap.alternateNames) {
-        EventMap.prototype.addListener = EventMap.prototype.on;
-        EventMap.prototype.removeListener = EventMap.prototype.off;
-        EventMap.prototype.emit = EventMap.prototype.trigger;
-        EventMap.prototype.once = EventMap.prototype.one;
-      }
+	var _statics2 = _interopRequireDefault(_statics);
 
-      return EventMap;
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-    })();
-    EventMap.maxListeners = -1;
-    return EventMap;
-  };
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else {
-    if (typeof exports !== "undefined" && exports !== null) {
-      module.exports = factory();
-    } else {
-      window.EventMap = factory();
-    }
-  }
+	// TODO: Evaluate if we can do without a class?
 
-}).call(this);
+	var EventMap = function EventMap(options) {
+	  _classCallCheck(this, EventMap);
+
+	  this.events = {};
+	};
+
+	// Stitch everything together
+	// Instance methods first
+
+	EventMap.maxListeners = -1;
+	Object.keys(_methods2.default).forEach(function (method) {
+	  EventMap.prototype[method] = function () {
+	    return _methods2.default[method].apply(this, arguments);
+	  };
+	});
+
+	// Static methods next
+	Object.keys(_statics2.default).forEach(function (staticMethod) {
+	  EventMap[staticMethod] = function () {
+	    return _statics2.default[staticMethod](EventMap).apply(this, arguments);
+	  };
+	});
+
+	exports.default = EventMap;
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _all = __webpack_require__(2);
+
+	var _all2 = _interopRequireDefault(_all);
+
+	var _deserialize = __webpack_require__(3);
+
+	var _deserialize2 = _interopRequireDefault(_deserialize);
+
+	var _filter = __webpack_require__(4);
+
+	var _filter2 = _interopRequireDefault(_filter);
+
+	var _many = __webpack_require__(5);
+
+	var _many2 = _interopRequireDefault(_many);
+
+	var _off = __webpack_require__(6);
+
+	var _off2 = _interopRequireDefault(_off);
+
+	var _on = __webpack_require__(7);
+
+	var _on2 = _interopRequireDefault(_on);
+
+	var _serialize = __webpack_require__(8);
+
+	var _serialize2 = _interopRequireDefault(_serialize);
+
+	var _trigger = __webpack_require__(9);
+
+	var _trigger2 = _interopRequireDefault(_trigger);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = { all: _all2.default, deserialize: _deserialize2.default, filter: _filter2.default, many: _many2.default, on: _on2.default, off: _off2.default, serialize: _serialize2.default, trigger: _trigger2.default };
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function () {
+	  this.trigger('*');
+
+	  return this;
+	};
+
+	;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (string) {
+	  var events = {};
+
+	  try {
+	    events = JSON.parse(string, function (key, value) {
+	      return value.indexOf('function') === 0 ? new Function(value)() : value;
+	    });
+	  } catch (err) {
+	    console.error('Error while deserializing eventmap: ' + err);
+	    return this;
+	  }
+
+	  this.events.listeners = events;
+
+	  return this;
+	};
+
+	;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (isFilter) {};
+
+	;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function () {
+	  var _this = this;
+
+	  for (var _len = arguments.length, names = Array(_len), _key = 0; _key < _len; _key++) {
+	    names[_key] = arguments[_key];
+	  }
+
+	  names.forEach(function (name) {
+	    return _this.trigger(name);
+	  });
+
+	  return this;
+	};
+
+	;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function () {};
+
+	;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (eventName, eventFunction) {};
+
+	;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function () {
+	  var result = '';
+
+	  try {
+	    result = JSON.stringify(this.events.listeners, function (key, value) {
+	      return typeof value === 'function' ? value.toString() : value;
+	    });
+	  } catch (err) {
+	    console.error('Error while serializing eventmap: ' + err);
+	  }
+
+	  return result;
+	};
+
+	;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (name) {
+
+	  return this;
+	};
+
+	;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _mixin = __webpack_require__(11);
+
+	var _mixin2 = _interopRequireDefault(_mixin);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = { mixin: _mixin2.default };
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (EventMap) {
+	  return function (instance, Type) {
+	    var eventmap = new EventMap();
+
+	    instance.events = eventmap.events;
+
+	    Object.keys(Object.getPrototypeOf(eventmap)).forEach(function (methodName) {
+	      if (!Type) {
+	        instance[methodName] = EventMap.prototype[methodName].bind(instance);
+	      } else {
+	        Type.prototype[methodName] = EventMap.prototype[methodName];
+	      }
+	    });
+	  };
+	};
+
+	;
+
+/***/ }
+/******/ ])
+});
+;
