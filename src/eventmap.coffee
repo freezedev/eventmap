@@ -6,45 +6,15 @@ root = @
 # Factory definition
 factory = ->
   slice = Array::slice
-  
-  # Function.bind shim
-  Function::bind ?= (context) ->
-    func = this
-    args = slice.call(arguments, 1)
-    # The bound function must share the .prototype of the unbound
-    # function so that any object created by one constructor will count
-    # as an instance of both constructors.
-  
-    bound = ->
-      invokedAsConstructor = func.prototype and this instanceof func
-      ctx = !invokedAsConstructor and context or this
-      func.apply ctx, args.concat(slice.call(arguments))
-  
-    bound.prototype = func.prototype
-    bound
-  
-  # Object.getPrototypeOf shim
-  Object.getPrototypeOf ?= (object) ->
-    proto = object.__proto__
-    if proto or proto is null
-      return proto
-    else
-      if object.constructor
-        return object.constructor
-       else
-        return Object.prototype
-  
-  # ES5 shims
-  do -> Array.isArray ?= (a) -> a.push is Array.prototype.push and a.length?
-  
+
   # hasOwnProperty shorthand
   hasProp = {}.hasOwnProperty
-  
+
   # Default options, similar to _.defaults, but without the edge cases
   # of $.extend
   defaults = (opts, defOpts) ->
     opts = {} unless opts?
-      
+
     for key, value of defOpts
       unless hasProp.call opts, key
         if typeof value is 'object' and value isnt null
@@ -52,9 +22,9 @@ factory = ->
           defaults opts[key], value
         else
           opts[key] = value
-        
+
     opts
-    
+
   checkEventName = (name) ->
     if name is '*' then throw new Error '* is not allowed as an event name'
 
@@ -72,7 +42,7 @@ factory = ->
         shorthandFunctions:
           enabled: true
           separator: '/'
-      
+
       @events =
         listeners: {}
         sender: options.sender
@@ -93,7 +63,7 @@ factory = ->
       catch err
         console.error "Error while serializing eventmap: #{err}"
       result
-      
+
     deserialize: (string) ->
       try
         events = JSON.parse string, (key, value) ->
@@ -103,23 +73,23 @@ factory = ->
       catch err
         console.error "Error while deserializing eventmap: #{err}"
         return false
-        
+
       @events.listeners = events
       true
 
     bind: (eventName, context = @) ->
       return unless @events.options.shorthandFunctions.enabled
-      
+
       eventName = [eventName] unless Array.isArray eventName
-      
+
       bindSingleEvent = (evName) ->
         unless context[evName]
           context[evName] = (args...) ->
             args.unshift(evName)
             @trigger.apply @, args
-            
+
       bindSingleEvent e for e in eventName
-      
+
       @
 
     on: (eventName, eventFunction) ->
@@ -127,7 +97,7 @@ factory = ->
 
       if @events.valid.length > 0
         return if @events.valid.indexOf(eventName) is -1
-      
+
       @events.listeners[eventName] or=
         id: -1
         type: ''
@@ -144,61 +114,61 @@ factory = ->
       (@events.listeners[eventName]['now'] or= []).push eventFunction
 
       @bind eventName
-      
+
       @
-      
+
     off: (eventName) ->
       if eventName and @events.listeners[eventName]
         {id, type} = @events.listeners[eventName]
-  
+
         if type is 'once' or type is 'repeat'
           root.clearInterval id if type is 'repeat'
           root.clearTimeout id if type is 'once'
-  
+
         delete @events.listeners[eventName] if @events.listeners[eventName]
       else
         return
 
       @
-    
+
     one: (eventName, eventFunction) ->
       @on eventName, =>
         eventFunction.apply @, arguments
         @off eventName
-    
+
     before: (eventName, eventFunction) ->
       return unless eventFunction
 
       addEventListener.call @, 'before', eventName, eventFunction
-      
+
       @
-      
+
     after: (eventName, eventFunction) ->
       return unless eventFunction
 
       addEventListener.call @, 'after', eventName, eventFunction
-      
+
       @
-    
+
     clear: ->
       @events.listeners = {}
       @events.valid = []
-      
+
       @
-    
+
     all: ->
       @trigger '*'
-      
+
       @
-    
+
     trigger: (eventName, args...) ->
       # Break if eventName parameter has been omitted
       return unless eventName?
-      
+
       if eventName is '*'
         @trigger e, args for e in Object.keys @events.listeners
         return
-      
+
       # Call multiple events
       @trigger e, args for e in eventName if Array.isArray eventName
 
@@ -218,15 +188,15 @@ factory = ->
       context = {} unless context?
       delay = 0 unless delay?
       sender = @events.sender unless sender?
-      
+
       context.sender = sender unless sender?
-      
+
       # TODO: Add support for asynchronous functions
       triggerFunction = =>
         nowArr = @events.listeners[name]['now'] || []
         beforeArr = @events.listeners[name]['before'] || []
         afterArr = @events.listeners[name]['after'] || []
-        
+
         callEvents = (eventArr) =>
           if eventArr?
             for event in eventArr
@@ -239,19 +209,19 @@ factory = ->
                 else
                   event.apply context, args
           null
-        
+
         # Call before events
         callEvents beforeArr
-        
+
         # Call actual events
         callEvents nowArr
-        
+
         # Call after events
         callEvents afterArr
-      
+
       # Call event
       ev = @events.listeners[name]
-      
+
       triggerEvent = ->
         if interval
           if repeat
@@ -264,7 +234,7 @@ factory = ->
           ev.type = 'direct'
           triggerFunction.call @
         null
-      
+
       if delay
         timeoutId = root.setTimeout (->
           triggerEvent.call @
@@ -272,22 +242,22 @@ factory = ->
         ), delay
       else
         triggerEvent.call @
-      
+
       @
-    
+
     @mixin: (instance, Type) ->
       eventmap = new EventMap()
-      
+
       instance.events = eventmap.events
-      
+
       Object.keys(Object.getPrototypeOf(eventmap)).forEach (methodName) ->
         unless Type
           instance[methodName] = EventMap::[methodName].bind(instance)
         else
           Type::[methodName] = EventMap::[methodName]
-        
+
       @
-      
+
     if @alternateNames
       EventMap::addListener = EventMap::on
       EventMap::removeListener = EventMap::off
@@ -299,8 +269,8 @@ factory = ->
 
   # Return reference
   EventMap
-  
-  
+
+
 if typeof define is 'function' and define.amd
   # AMD
   define [], factory
