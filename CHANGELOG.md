@@ -1,3 +1,7 @@
+2.1.0
+- Update devDependencies
+- License field is compatible to SPDX
+
 2.0.0
 - ES5 shims are no longer part of the distribution
 - NPM 3.x compatibility
